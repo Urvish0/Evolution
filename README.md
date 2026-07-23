@@ -10,6 +10,23 @@ The long-term vision is to become the engineering platform for building, reviewi
 
 ---
 
+## Quick Start
+
+```bash
+git clone https://github.com/Urvish0/Evolution.git
+cd Evolution
+
+go run ./cmd/evo version
+go run ./cmd/evo init
+go run ./cmd/evo status
+```
+
+Later, we'll replace `go run` with a proper installed binary like:
+
+```bash
+evo init
+```
+
 ## Problem Statement
 
 Artificial intelligence is rapidly transforming software development, but the engineering practices surrounding AI systems remain immature. Unlike traditional software, AI applications are driven by dynamic components such as prompts, memory, retrieval, models, tools, and policies, all of which can evolve independently and influence system behavior in unpredictable ways.
@@ -86,11 +103,22 @@ See:
 
 Current Phase:
 
-> Phase 0 — Foundation
+> Phase 1 — Bootstrap
 
-No production code has been written yet.
+### Implemented
 
-The current focus is designing the product correctly before implementation.
+- Go-based CLI
+- Repository initialization (`evo init`)
+- Repository status (`evo status`)
+- Version command (`evo version`)
+- Local Evolution repository (`.evolution`)
+- Repository configuration loading
+
+### Current Focus
+
+Building the Repository Engine.
+
+The next milestone introduces Intelligence Commits, snapshot storage, hashing, and repository history.
 
 ---
 

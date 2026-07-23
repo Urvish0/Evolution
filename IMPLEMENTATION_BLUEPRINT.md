@@ -28,9 +28,9 @@ Create the Evolution CLI.
 
 ## Project Setup
 
-- [ ] Initialize Go module
-- [ ] Create project structure
-- [ ] Install Cobra
+- [x] Initialize Go module
+- [x] Create project structure
+- [x] Install Cobra
 - [ ] Configure GitHub Actions
 - [ ] Configure linting
 
@@ -38,8 +38,9 @@ Create the Evolution CLI.
 
 ## CLI
 
-- [ ] evo version
-- [ ] evo help
+- [x] evo version
+- [x] evo help
+- [x] evo status
 - [ ] Global flags
 
 ---
@@ -48,9 +49,16 @@ Create the Evolution CLI.
 
 - Go modules
 - Packages
+- Project structure
 - Functions
 - Variables
-- Project structure
+- Constants
+- Structs
+- JSON
+- File I/O
+- Error handling
+- Cobra CLI
+- Package organization
 
 ---
 
@@ -62,17 +70,17 @@ Create and manage Evolution repositories.
 
 ## Repository
 
-- [ ] evo init
-- [ ] Repository discovery
-- [ ] Repository validation
-- [ ] Configuration loading
+- [x] evo init
+- [x] Repository discovery
+- [x] Repository validation
+- [x] Configuration loading
 
 ---
 
 ## File System
 
-- [ ] Create .evolution/
-- [ ] Create config
+- [x] Create .evolution/
+- [x] Create config
 - [ ] Create branches
 - [ ] Create commits
 - [ ] Create artifacts
