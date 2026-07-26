@@ -30,5 +30,11 @@ func Init() error {
 		return err
 	}
 
+	branch := NewBranch(DefaultBranch)
+
+	if err := writeBranch(branch); err != nil {
+		return err
+	}
+
 	return nil
 }

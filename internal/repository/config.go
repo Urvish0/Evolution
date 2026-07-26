@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"encoding/json"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,4 +23,29 @@ func NewConfig() Config {
 		CreatedAt:     time.Now().UTC().Format(time.RFC3339),
 		DefaultBranch: DefaultBranch,
 	}
+}
+func LoadConfig() (Config, error) {
+	var config Config
+
+	data, err := os.ReadFile(filepath.Join(RepositoryDir, ConfigFile))
+	if err != nil {
+		return config, err
+	}
+
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		return config, err
+	}
+
+	return config, nil
+}
+func writeConfig(config Config) error {
+	data, err := json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	configPath := filepath.Join(RepositoryDir, ConfigFile)
+
+	return os.WriteFile(configPath, data, 0644)
 }

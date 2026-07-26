@@ -1,12 +1,10 @@
 # Evolution
 
-> Version, evaluate, and evolve AI intelligence with the engineering discipline of modern software development.
+> Version intelligence, not code.
 
 Evolution is an AI engineering platform that introduces version control for intelligence.
 
-Instead of versioning only source code, Evolution versions the entire lifecycle of an AI system—including prompts, memory, retrieval, tool usage, evaluations, policies, and deployments.
-
-The long-term vision is to become the engineering platform for building, reviewing, evaluating, deploying, and evolving AI systems.
+Instead of versioning only source code, Evolution versions the entire lifecycle of an AI system — prompts, memory, retrieval, tool usage, evaluations, policies, and deployments.
 
 ---
 
@@ -19,106 +17,101 @@ cd Evolution
 go run ./cmd/evo version
 go run ./cmd/evo init
 go run ./cmd/evo status
+go run ./cmd/evo commit -m "initial intelligence"
+go run ./cmd/evo log
 ```
 
-Later, we'll replace `go run` with a proper installed binary like:
+---
 
-```bash
-evo init
-```
+## Problem
 
-## Problem Statement
+AI systems are driven by dynamic components — prompts, memory, retrieval, models, tools, and policies — that evolve independently and influence behavior unpredictably.
 
-Artificial intelligence is rapidly transforming software development, but the engineering practices surrounding AI systems remain immature. Unlike traditional software, AI applications are driven by dynamic components such as prompts, memory, retrieval, models, tools, and policies, all of which can evolve independently and influence system behavior in unpredictable ways.
+Teams struggle to:
 
-As AI systems grow in complexity, developers often lose visibility into why an agent behaves differently, what changed between deployments, or how to confidently reproduce previous results. A single modification to a prompt, memory state, retrieval configuration, or model can produce unexpected behavior, yet existing tooling rarely provides a complete picture of how these changes interact.
-
-This lack of transparency creates engineering uncertainty. Teams struggle to understand failures, review changes, reproduce historical behavior, evaluate improvements, and deploy AI systems with confidence.
+- Understand why an agent behaves differently
+- Identify which change introduced a regression
+- Reproduce previous AI behavior
+- Compare intelligence across versions
+- Deploy AI updates with confidence
 
 Evolution exists to reduce that uncertainty.
-
-By treating intelligence as a versioned, observable, and reproducible asset, Evolution enables engineering teams to understand how AI systems evolve over time, confidently evaluate changes, and manage the complete lifecycle of AI intelligence with the same discipline that modern software engineering applies to source code.
-
-Ultimately, Evolution aims to make AI systems easier to understand, safer to improve, and more trustworthy to deploy.
-
-## Why Evolution?
-
-Modern software engineering has Git.
-
-AI engineering doesn't.
-
-Today's AI applications struggle with questions like:
-
-- Why did my agent suddenly behave differently?
-- Which prompt change introduced this regression?
-- Why did memory become corrupted?
-- Can I compare today's intelligence against last week's?
-- Can I replay historical executions?
-- Can I safely deploy new intelligence?
-
-Evolution aims to answer those questions.
 
 ---
 
 ## Core Philosophy
 
-Evolution does **not** version:
+Evolution does **not** version prompts, memories, or workflows individually.
 
-- prompts
-- memories
-- workflows
+Evolution versions **Intelligence** — the complete operational state of an AI system at a point in time.
 
-Evolution versions **Intelligence**.
-
-Everything else becomes a versioned artifact.
+Everything else is a versioned artifact within that intelligence.
 
 ---
 
-## Core Features
+## Features
 
-- Intelligence Commits
-- Prompt Versioning
-- Memory Versioning
-- Retrieval Versioning
-- Tool Versioning
-- Evaluation Engine
-- Decision Graph
-- Replay Engine
-- Review Workflow
-- Deployment Pipeline
-- Observability
+| Feature | Description | Status |
+|---------|-------------|--------|
+| `evo init` | Initialize an Evolution repository | ✅ |
+| `evo status` | Show repository status and branch | ✅ |
+| `evo commit` | Create an Intelligence Commit | ✅ |
+| `evo log` | View commit history | ✅ |
+| `evo version` | Display CLI version | ✅ |
+| `evo branch` | Branch management | Planned |
+| `evo checkout` | Switch branches | Planned |
+| `evo diff` | Compare intelligence versions | Planned |
+| `evo replay` | Replay historical executions | Planned |
+| `evo evaluate` | Run evaluations | Planned |
 
 ---
 
-## Roadmap
+## Architecture
 
-See:
+```
+Developer → CLI / SDK → Core Engine → Evolution Repository → Replay & Evaluation
+```
 
-- ROADMAP.md
-- docs/PROJECT_BLUEPRINT.md
+**Tech Stack:** Go, Cobra CLI, JSON serialization, local filesystem storage.
+
+See [EVOLUTION_MASTER_PLAN.md](EVOLUTION_MASTER_PLAN.md) for the complete roadmap, architecture, and phase details.
+
+---
+
+## Project Structure
+
+```
+Evolution/
+├── cmd/evo/             # CLI entry point
+├── internal/
+│   ├── cli/             # Cobra command handlers
+│   ├── repository/      # Core versioning engine
+│   └── version/         # Version metadata
+├── docs/                # Design documentation
+├── .agents/             # AI collaboration rules
+└── EVOLUTION_MASTER_PLAN.md  # Single source of truth
+```
+
+---
+
+## Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [Master Plan](EVOLUTION_MASTER_PLAN.md) | Roadmap, progress, architecture — single source of truth |
+| [PRD](docs/PRD.md) | Product requirements and vision |
+| [Domain Model](docs/DOMAIN_MODEL.md) | Core entities and relationships |
+| [Architecture Principles](docs/ARCHITECTURE_PRINCIPLES.md) | Design constraints |
+| [CLI Spec](docs/CLI_SPEC.md) | Command definitions |
+| [ADRs](docs/adr/) | Architecture Decision Records |
 
 ---
 
 ## Current Status
 
-Current Phase:
+> **Phase 1 — Bootstrap** (completing)
 
-> Phase 1 — Bootstrap
-
-### Implemented
-
-- Go-based CLI
-- Repository initialization (`evo init`)
-- Repository status (`evo status`)
-- Version command (`evo version`)
-- Local Evolution repository (`.evolution`)
-- Repository configuration loading
-
-### Current Focus
-
-Building the Repository Engine.
-
-The next milestone introduces Intelligence Commits, snapshot storage, hashing, and repository history.
+The CLI and local repository engine are functional. Next milestone: bug fixes, branch operations, content-addressable storage, and full Intelligence Commits.
 
 ---
 

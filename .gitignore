@@ -1,1 +1,31 @@
+# Evolution local repository
+.evolution/
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/evo
+/main
+
+# Go test artifacts
+*.test
+*.out
+cover.html
+coverage.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Personal notes
 invisible.md

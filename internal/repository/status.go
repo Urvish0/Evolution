@@ -8,14 +8,14 @@ type Status struct {
 }
 
 func GetStatus() (Status, error) {
-	config, err := LoadConfig()
+	repo, err := OpenRepository()
 	if err != nil {
 		return Status{}, err
 	}
 
 	return Status{
 		Initialized: true,
-		Branch:      config.DefaultBranch,
+		Branch:      repo.Branch.Name,
 		Commits:     0,
 		Clean:       true,
 	}, nil

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
@@ -21,19 +20,23 @@ func ensureNotInitialized() error {
 	return nil
 }
 func createRepositoryDirectory() error {
-	return os.Mkdir(RepositoryDir, 0755)
-}
-
-func writeConfig(config Config) error {
-	data, err := json.MarshalIndent(config, "", "  ")
-	if err != nil {
-		return err
+	directories := []string{
+		RepositoryDir,
+		filepath.Join(RepositoryDir, BranchesDir),
+		filepath.Join(RepositoryDir, CommitsDir),
+		filepath.Join(RepositoryDir, ObjectsDir),
+		filepath.Join(RepositoryDir, ArtifactsDir),
 	}
 
-	configPath := filepath.Join(RepositoryDir, ConfigFile)
+	for _, dir := range directories {
+		if err := os.Mkdir(dir, 0755); err != nil {
+			return err
+		}
+	}
 
-	return os.WriteFile(configPath, data, 0644)
+	return nil
 }
+
 func writeHead() error {
 	headPath := filepath.Join(RepositoryDir, HeadFile)
 
