@@ -2,6 +2,7 @@ package repository
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -31,12 +32,12 @@ func LoadCommit(id string) (Commit, error) {
 
 	data, err := os.ReadFile(filepath.Join(RepositoryDir, CommitsDir, id+".json"))
 	if err != nil {
-		return commit, err
+		return commit, fmt.Errorf("reading commit: %w", err)
 	}
 
 	err = json.Unmarshal(data, &commit)
 	if err != nil {
-		return commit, err
+		return commit, fmt.Errorf("parsing commit: %w", err)
 	}
 
 	return commit, nil
@@ -45,7 +46,7 @@ func LoadCommit(id string) (Commit, error) {
 func WriteCommit(commit Commit) error {
 	data, err := json.MarshalIndent(commit, "", " ")
 	if err != nil {
-		return err
+		return fmt.Errorf("writing commit: %w", err)
 	}
 
 	commitPath := filepath.Join(RepositoryDir, CommitsDir, commit.ID+".json")
@@ -55,21 +56,21 @@ func CreateCommit(message string) error {
 
 	repo, err := OpenRepository()
 	if err != nil {
-		return err
+		return fmt.Errorf("opening repo for commit: %w", err)
 	}
 
 	commit := NewCommit(message)
 	commit.Parent = repo.Branch.Head
 
 	if err := WriteCommit(commit); err != nil {
-		return err
+		return fmt.Errorf("writing commit: %w", err)
 	}
 
 	branch := repo.Branch
 	branch.Head = commit.ID
 
 	if err := UpdateBranch(branch); err != nil {
-		return err
+		return fmt.Errorf("updating branch for commit: %w", err)
 	}
 
 	return nil

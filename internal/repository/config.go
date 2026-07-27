@@ -2,6 +2,7 @@ package repository
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -29,12 +30,12 @@ func LoadConfig() (Config, error) {
 
 	data, err := os.ReadFile(filepath.Join(RepositoryDir, ConfigFile))
 	if err != nil {
-		return config, err
+		return config, fmt.Errorf("reading config: %w", err)
 	}
 
 	err = json.Unmarshal(data, &config)
 	if err != nil {
-		return config, err
+		return config, fmt.Errorf("parsing config: %w", err)
 	}
 
 	return config, nil
@@ -42,7 +43,7 @@ func LoadConfig() (Config, error) {
 func writeConfig(config Config) error {
 	data, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
-		return err
+		return fmt.Errorf("serealizing config: %w", err)
 	}
 
 	configPath := filepath.Join(RepositoryDir, ConfigFile)

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -14,7 +15,7 @@ func ensureNotInitialized() error {
 	}
 
 	if !os.IsNotExist(err) {
-		return err
+		return fmt.Errorf("checking repository directory: %w", err)
 	}
 
 	return nil
@@ -30,7 +31,7 @@ func createRepositoryDirectory() error {
 
 	for _, dir := range directories {
 		if err := os.Mkdir(dir, 0755); err != nil {
-			return err
+			return fmt.Errorf("creating directory %s: %w", dir, err)
 		}
 	}
 

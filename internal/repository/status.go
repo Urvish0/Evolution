@@ -1,5 +1,7 @@
 package repository
 
+import "fmt"
+
 type Status struct {
 	Initialized bool
 	Branch      string
@@ -10,13 +12,20 @@ type Status struct {
 func GetStatus() (Status, error) {
 	repo, err := OpenRepository()
 	if err != nil {
-		return Status{}, err
+		return Status{}, fmt.Errorf("opening repository for status: %w", err)
 	}
+
+	commits, err := Log()
+	if err != nil {
+		return Status{}, fmt.Errorf("loading commit history: %w", err)
+	}
+
+	count := len(commits)
 
 	return Status{
 		Initialized: true,
 		Branch:      repo.Branch.Name,
-		Commits:     0,
+		Commits:     count,
 		Clean:       true,
 	}, nil
 }
