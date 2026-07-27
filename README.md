@@ -56,10 +56,11 @@ Everything else is a versioned artifact within that intelligence.
 | `evo init` | Initialize an Evolution repository | ✅ |
 | `evo status` | Show repository status and branch | ✅ |
 | `evo commit` | Create an Intelligence Commit | ✅ |
-| `evo log` | View commit history | ✅ |
+| `evo log` | View commit history (with `--oneline`, `-n`, colors) | ✅ |
+| `evo config` | Manage user identity (`user.name`, `user.email`) | ✅ |
+| `evo branch` | List, create (`-n`), and delete (`-d`) branches | ✅ |
+| `evo checkout` | Switch active branch | ✅ |
 | `evo version` | Display CLI version | ✅ |
-| `evo branch` | Branch management | Planned |
-| `evo checkout` | Switch branches | Planned |
 | `evo diff` | Compare intelligence versions | Planned |
 | `evo replay` | Replay historical executions | Planned |
 | `evo evaluate` | Run evaluations | Planned |
@@ -89,6 +90,7 @@ Evolution/
 │   └── version/         # Version metadata
 ├── docs/                # Design documentation
 ├── .agents/             # AI collaboration rules
+├── USAGE.md             # Complete CLI usage guide
 └── EVOLUTION_MASTER_PLAN.md  # Single source of truth
 ```
 
@@ -98,6 +100,7 @@ Evolution/
 
 | Document | Purpose |
 |----------|---------|
+| [CLI Usage Guide](USAGE.md) | Complete reference for all CLI commands and workflows |
 | [Master Plan](EVOLUTION_MASTER_PLAN.md) | Roadmap, progress, architecture — single source of truth |
 | [PRD](docs/PRD.md) | Product requirements and vision |
 | [Domain Model](docs/DOMAIN_MODEL.md) | Core entities and relationships |
@@ -109,9 +112,9 @@ Evolution/
 
 ## Current Status
 
-> **Phase 1 — Bootstrap** (completing)
+> **Phase 2 — Repository Engine** (in progress)
 
-The CLI and local repository engine are functional. Next milestone: bug fixes, branch operations, content-addressable storage, and full Intelligence Commits.
+The CLI and local repository engine support configuration, branching, history, and status. Next milestone: testing foundation and content-addressable storage (Phase 3).
 
 ---
 
