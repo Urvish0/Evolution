@@ -62,7 +62,7 @@ evo status
 
 ### 4. Creating Intelligence Commits (`evo commit`)
 
-Creates an immutable commit snapshot with your message, author identity, timestamp, and link to parent commit.
+Creates an immutable commit snapshot. Automatically captures the workspace directory state as a Merkle tree of hashed Blobs (`.evolution/objects/xx/yyyy...`), linking the root tree hash (`tree_hash`) to your commit along with your author identity, timestamp, and parent commit.
 
 ```bash
 evo commit -m "Initial intelligence setup"

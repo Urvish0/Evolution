@@ -16,6 +16,7 @@ type Commit struct {
 	Message   string `json:"message"`
 	Author    string `json:"author"`
 	Timestamp string `json:"timestamp"`
+	TreeHash  string `json:"tree_hash"`
 }
 
 func NewCommit(message string) Commit {
@@ -25,6 +26,7 @@ func NewCommit(message string) Commit {
 		Message:   message,
 		Author:    "",
 		Timestamp: time.Now().Format(time.RFC3339),
+		TreeHash:  "",
 	}
 }
 func LoadCommit(id string) (Commit, error) {
@@ -61,6 +63,13 @@ func CreateCommit(message string) error {
 
 	commit := NewCommit(message)
 	commit.Parent = repo.Branch.Head
+
+	// Capture workspace snapshot Merkle Tree hash
+	treeHash, err := BuildTreeFromDirectory(".")
+	if err != nil {
+		return fmt.Errorf("creating workspace snapshot tree: %w", err)
+	}
+	commit.TreeHash = treeHash
 
 	userCfg, _ := LoadUserConfig()
 	if userCfg.Name != "" {

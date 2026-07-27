@@ -50,6 +50,13 @@ var logCmd = &cobra.Command{
 				fmt.Printf("%s%s%s %s\n", colorYellow, shortID, colorReset, commit.Message)
 			} else {
 				fmt.Printf("%scommit %s%s\n", colorYellow, shortID, colorReset)
+				if commit.TreeHash != "" {
+					shortTree := commit.TreeHash
+					if len(shortTree) > 8 {
+						shortTree = shortTree[:8]
+					}
+					fmt.Printf("Tree:   %s%s%s\n", colorGray, shortTree, colorReset)
+				}
 				if commit.Author != "" {
 					fmt.Printf("Author: %s%s%s\n", colorCyan, commit.Author, colorReset)
 				}
