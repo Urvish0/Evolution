@@ -62,6 +62,15 @@ func CreateCommit(message string) error {
 	commit := NewCommit(message)
 	commit.Parent = repo.Branch.Head
 
+	userCfg, _ := LoadUserConfig()
+	if userCfg.Name != "" {
+		if userCfg.Email != "" {
+			commit.Author = fmt.Sprintf("%s <%s>", userCfg.Name, userCfg.Email)
+		} else {
+			commit.Author = userCfg.Name
+		}
+	}
+
 	if err := WriteCommit(commit); err != nil {
 		return fmt.Errorf("writing commit: %w", err)
 	}

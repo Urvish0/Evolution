@@ -19,7 +19,10 @@ var logCmd = &cobra.Command{
 
 		for _, commit := range commits {
 			fmt.Printf("commit %s\n", commit.ID)
-			fmt.Printf("Date: %s\n\n", commit.Timestamp)
+			if commit.Author != "" {
+				fmt.Printf("Author: %s\n", commit.Author)
+			}
+			fmt.Printf("Date:   %s\n\n", commit.Timestamp)
 			fmt.Printf("    %s\n\n", commit.Message)
 		}
 	},
