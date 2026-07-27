@@ -2,6 +2,8 @@
 
 > Version intelligence, not code.
 
+[![CI](https://github.com/Urvish0/Evolution/actions/workflows/ci.yml/badge.svg)](https://github.com/Urvish0/Evolution/actions/workflows/ci.yml)
+
 Evolution is an AI engineering platform that introduces version control for intelligence.
 
 Instead of versioning only source code, Evolution versions the entire lifecycle of an AI system — prompts, memory, retrieval, tool usage, evaluations, policies, and deployments.
