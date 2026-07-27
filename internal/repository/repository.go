@@ -13,9 +13,14 @@ func OpenRepository() (Repository, error) {
 		return Repository{}, fmt.Errorf("loading config: %w", err)
 	}
 
-	branch, err := LoadBranch(config.DefaultBranch)
+	currentBranch, err := GetCurrentBranchName()
 	if err != nil {
-		return Repository{}, fmt.Errorf("loading branch %s: %w", config.DefaultBranch, err)
+		return Repository{}, fmt.Errorf("reading current branch name: %w", err)
+	}
+
+	branch, err := LoadBranch(currentBranch)
+	if err != nil {
+		return Repository{}, fmt.Errorf("loading branch %s: %w", currentBranch, err)
 	}
 
 	return Repository{
