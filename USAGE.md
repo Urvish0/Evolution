@@ -60,9 +60,26 @@ evo status
 
 ---
 
-### 4. Creating Intelligence Commits (`evo commit`)
+### 4. Staging Files (`evo add`)
 
-Creates an immutable commit snapshot. Automatically captures the workspace directory state as a Merkle tree of hashed Blobs (`.evolution/objects/xx/yyyy...`), linking the root tree hash (`tree_hash`) to your commit along with your author identity, timestamp, and parent commit.
+Stages specific files or directories into the Staging Area (`.evolution/index`) before committing.
+
+```bash
+# Stage a specific file
+evo add prompt.txt
+
+# Stage a directory recursively
+evo add tools/
+
+# Stage all files in current directory
+evo add .
+```
+
+---
+
+### 5. Creating Intelligence Commits (`evo commit`)
+
+Creates an immutable commit snapshot. Automatically captures staged files from the Staging Area (`.evolution/index`) as a Merkle tree of hashed Blobs (`.evolution/objects/xx/yyyy...`), linking the root tree hash (`tree_hash`) to your commit along with your author identity, timestamp, and parent commit.
 
 ```bash
 evo commit -m "Initial intelligence setup"

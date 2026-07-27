@@ -57,6 +57,7 @@ Everything else is a versioned artifact within that intelligence.
 |---------|-------------|--------|
 | `evo init` | Initialize an Evolution repository | ✅ |
 | `evo status` | Show repository status and branch | ✅ |
+| `evo add` | Stage files or directories for commit | ✅ |
 | `evo commit` | Create an Intelligence Commit | ✅ |
 | `evo log` | View commit history (with `--oneline`, `-n`, colors) | ✅ |
 | `evo config` | Manage user identity (`user.name`, `user.email`) | ✅ |

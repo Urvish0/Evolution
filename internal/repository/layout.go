@@ -5,4 +5,5 @@ const (
 	CommitsDir   = "commits"
 	ObjectsDir   = "objects"
 	ArtifactsDir = "artifacts"
+	IndexFile    = "index"
 )

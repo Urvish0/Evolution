@@ -65,9 +65,19 @@ func CreateCommit(message string) error {
 	commit.Parent = repo.Branch.Head
 
 	// Capture workspace snapshot Merkle Tree hash
-	treeHash, err := BuildTreeFromDirectory(".")
-	if err != nil {
-		return fmt.Errorf("creating workspace snapshot tree: %w", err)
+	var treeHash string
+	idx, err := LoadIndex()
+	if err == nil && len(idx.Entries) > 0 {
+		treeHash, err = BuildTreeFromIndex(idx)
+		if err != nil {
+			return fmt.Errorf("building tree from index: %w", err)
+		}
+	} else {
+		// Fallback: build tree from directory if index is empty
+		treeHash, err = BuildTreeFromDirectory(".")
+		if err != nil {
+			return fmt.Errorf("creating workspace snapshot tree: %w", err)
+		}
 	}
 	commit.TreeHash = treeHash
 
@@ -89,6 +99,11 @@ func CreateCommit(message string) error {
 
 	if err := UpdateBranch(branch); err != nil {
 		return fmt.Errorf("updating branch for commit: %w", err)
+	}
+
+	// Clear index after successful commit if it was used
+	if len(idx.Entries) > 0 {
+		_ = SaveIndex(NewIndex())
 	}
 
 	return nil
