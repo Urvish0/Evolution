@@ -159,3 +159,56 @@ func collectTreeEntries(treeHash string, prefix string, result map[string]string
 func (wts WorkingTreeStatus) IsClean() bool {
 	return len(wts.Staged) == 0 && len(wts.Modified) == 0 && len(wts.Untracked) == 0 && len(wts.Deleted) == 0
 }
+
+// GetCommittedFileHash returns the blob hash for a file path from the HEAD commit tree.
+func GetCommittedFileHash(filePath string) (string, error) {
+	repo, err := OpenRepository()
+	if err != nil {
+		return "", fmt.Errorf("opening repository: %w", err)
+	}
+
+	if repo.Branch.Head == "" {
+		return "", fmt.Errorf("no commits yet")
+	}
+
+	commit, err := LoadCommit(repo.Branch.Head)
+	if err != nil {
+		return "", fmt.Errorf("loading HEAD commit: %w", err)
+	}
+
+	if commit.TreeHash == "" {
+		return "", fmt.Errorf("HEAD commit has no tree hash")
+	}
+
+	committedFiles := make(map[string]string)
+	collectTreeEntries(commit.TreeHash, "", committedFiles)
+
+	hash, exists := committedFiles[filePath]
+	if !exists {
+		return "", fmt.Errorf("file %s not found in HEAD commit", filePath)
+	}
+
+	return hash, nil
+}
+
+// GetContentDiff produces a line-by-line diff for a file between its committed version and current disk version.
+func GetContentDiff(filePath string) ([]DiffLine, error) {
+	// Read old content from committed blob
+	committedHash, err := GetCommittedFileHash(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	oldContent, err := ReadBlob(committedHash)
+	if err != nil {
+		return nil, fmt.Errorf("reading committed blob for %s: %w", filePath, err)
+	}
+
+	// Read new content from disk
+	newContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("reading workspace file %s: %w", filePath, err)
+	}
+
+	return ComputeLineDiff(string(oldContent), string(newContent)), nil
+}
