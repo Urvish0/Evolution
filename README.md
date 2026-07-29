@@ -64,7 +64,7 @@ Everything else is a versioned artifact within that intelligence.
 | `evo branch` | List, create (`-n`), and delete (`-d`) branches | ✅ |
 | `evo checkout` | Switch active branch | ✅ |
 | `evo version` | Display CLI version | ✅ |
-| `evo diff` | Compare intelligence versions | Planned |
+| `evo diff` | Compare working tree against HEAD | ✅ |
 | `evo replay` | Replay historical executions | Planned |
 | `evo evaluate` | Run evaluations | Planned |
 

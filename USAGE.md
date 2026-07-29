@@ -87,7 +87,7 @@ evo commit -m "Initial intelligence setup"
 
 ---
 
-### 5. Viewing History (`evo log`)
+### 6. Viewing History (`evo log`)
 
 Inspects commit history from HEAD back to the initial (genesis) commit.
 
@@ -107,7 +107,7 @@ evo log --oneline -n 3
 
 ---
 
-### 6. Branch Management (`evo branch` & `evo checkout`)
+### 7. Branch Management (`evo branch` & `evo checkout`)
 
 Create, list, switch, and delete branches for parallel intelligence experimentation.
 
@@ -129,7 +129,20 @@ evo branch -d feature-prompt
 
 ---
 
-### 7. Version & Help
+### 8. Working Tree Comparison (`evo diff`)
+
+Compares the current workspace files against the last committed Merkle tree snapshot to detect new, modified, and deleted files.
+
+```bash
+# Show all changes vs HEAD
+evo diff
+```
+
+*Output shows `[staged]`, `[modified]`, `[deleted]`, and `[new]` file labels with color coding.*
+
+---
+
+### 9. Version & Help
 
 ```bash
 # Display CLI version
