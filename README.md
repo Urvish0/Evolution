@@ -91,6 +91,7 @@ Evolution/
 │   ├── cli/             # Cobra command handlers
 │   ├── repository/      # Core versioning engine
 │   └── version/         # Version metadata
+├── spec/                # Intelligence Manifest Specification
 ├── docs/                # Design documentation
 ├── .agents/             # AI collaboration rules
 ├── USAGE.md             # Complete CLI usage guide
@@ -110,14 +111,15 @@ Evolution/
 | [Architecture Principles](docs/ARCHITECTURE_PRINCIPLES.md) | Design constraints |
 | [CLI Spec](docs/CLI_SPEC.md) | Command definitions |
 | [ADRs](docs/adr/) | Architecture Decision Records |
+| [Intelligence Manifest Spec](spec/intelligence-manifest-v0.1.md) | Open standard for describing AI system state |
 
 ---
 
 ## Current Status
 
-> **Phase 2 — Repository Engine** (in progress)
+> **Phase 3 — Object Model & Content-Addressable Storage** (complete)
 
-The CLI and local repository engine support configuration, branching, history, and status. Next milestone: testing foundation and content-addressable storage (Phase 3).
+Content-addressable storage with SHA-256 hashing, Merkle trees, blob/tree objects, staging area, working tree comparison, content-level diffing, and the Intelligence Manifest Specification v0.1. Next milestone: Intelligence Commits & Manifest Implementation (Phase 4).
 
 ---
 

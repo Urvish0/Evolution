@@ -2,7 +2,7 @@
 
 All notable changes to the Evolution platform are documented in this file.
 
-## [v0.3.0] - Object Model & Content-Addressable Storage (In Progress)
+## [v0.3.0] - Object Model & Content-Addressable Storage
 
 ### Added
 - SHA-256 Object Hashing Engine (`HashContent`, `HashRaw`) with Git-style header prefix (`<type> <len>\0<content>`).
@@ -10,6 +10,13 @@ All notable changes to the Evolution platform are documented in this file.
 - Automatic Blob Content Deduplication (skips re-writing existing SHA-256 hashes).
 - Merkle Tree Object Engine (`WriteTree`, `ReadTree`, `SerializeTree`, `ParseTree`).
 - Recursive Merkle Tree workspace creation (`BuildTreeFromDirectory`).
+- Snapshot Engine integrated into `evo commit` with `TreeHash` field on Commit struct.
+- Staging Area (`.evolution/index`) with `evo add <path>` CLI command.
+- Working Tree Comparison (`CompareWorkingTree`) detecting staged, modified, untracked, and deleted files.
+- `evo status` now displays real file-level change details with color-coded output.
+- `evo diff` showing Git-style unified content diffs (`--- a/` / `+++ b/`) for modified tracked files.
+- LCS-based line-by-line diff algorithm (`ComputeLineDiff`) for content-level change detection.
+- Intelligence Manifest Specification v0.1 (`spec/intelligence-manifest-v0.1.md`) — open standard for describing AI system state.
 
 ---
 
