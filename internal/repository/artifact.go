@@ -39,6 +39,9 @@ func (b BaseArtifact) Type() string    { return b.ArtifactType }
 func (b BaseArtifact) GetName() string { return b.Name }
 func (b BaseArtifact) GetHash() string { return b.Hash }
 func (b BaseArtifact) GetPath() string { return b.Path }
+func (b BaseArtifact) Serialize() ([]byte, error) {
+	return json.MarshalIndent(b, "", "  ")
+}
 
 // --- 1. Prompt Artifact ---
 
