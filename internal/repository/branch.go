@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Branch struct {
@@ -107,9 +108,9 @@ func CreateBranch(name string) error {
 	return writeBranch(branch)
 }
 
-// CheckoutBranch switches the active branch by updating the .evolution/HEAD file.
+// CheckoutBranch switches the active branch by updating .evolution/HEAD and restoring workspace files.
 func CheckoutBranch(name string) error {
-	_, err := LoadBranch(name)
+	branch, err := LoadBranch(name)
 	if err != nil {
 		return fmt.Errorf("cannot checkout %q: %w", name, err)
 	}
@@ -117,6 +118,49 @@ func CheckoutBranch(name string) error {
 	headPath := filepath.Join(RepositoryDir, HeadFile)
 	if err := os.WriteFile(headPath, []byte(name), 0644); err != nil {
 		return fmt.Errorf("updating HEAD file: %w", err)
+	}
+
+	// Restore workspace files from branch HEAD commit
+	if branch.Head != "" {
+		commit, err := LoadCommit(branch.Head)
+		if err == nil && commit.TreeHash != "" {
+			_ = RestoreTreeToWorkspace(commit.TreeHash, ".")
+		}
+	}
+
+	return nil
+}
+
+// CheckoutCommit switches to detached HEAD mode pointing directly to a commit ID.
+func CheckoutCommit(commitID string) error {
+	// Support short commit ID prefixes (e.g. first 8 chars)
+	realID := commitID
+	if len(commitID) < 36 {
+		// Search commits directory for matching prefix
+		commitsDir := filepath.Join(RepositoryDir, CommitsDir)
+		entries, err := os.ReadDir(commitsDir)
+		if err == nil {
+			for _, entry := range entries {
+				if strings.HasPrefix(entry.Name(), commitID) {
+					realID = strings.TrimSuffix(entry.Name(), ".json")
+					break
+				}
+			}
+		}
+	}
+
+	commit, err := LoadCommit(realID)
+	if err != nil {
+		return fmt.Errorf("checkout commit %s failed: %w", commitID, err)
+	}
+
+	headPath := filepath.Join(RepositoryDir, HeadFile)
+	if err := os.WriteFile(headPath, []byte(realID), 0644); err != nil {
+		return fmt.Errorf("updating HEAD file: %w", err)
+	}
+
+	if commit.TreeHash != "" {
+		_ = RestoreTreeToWorkspace(commit.TreeHash, ".")
 	}
 
 	return nil

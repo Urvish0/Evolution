@@ -240,14 +240,26 @@ evo branch -d exp-claude-sonnet
 ---
 
 ### `evo checkout`
-Switches active branch by updating `.evolution/HEAD`. Supports `-b / --create` flag to create and switch in a single command.
+Switches active branch and automatically restores physical workspace files on disk to match the branch's HEAD Merkle Tree snapshot. Supports `-b / --create` flag and detached HEAD commit checkout.
 
 ```bash
-# Switch to an existing branch
+# Switch to an existing branch (restores physical files)
 evo checkout main
 
 # Create a new branch and switch to it immediately
 evo checkout -b exp-prompt-v2
+
+# Checkout a specific commit directly (detached HEAD mode)
+evo checkout ed523a4d
+```
+
+---
+
+### `evo restore`
+Discards working directory modifications for a specified file and restores its content directly from the HEAD commit snapshot.
+
+```bash
+evo restore prompts/system.txt
 ```
 
 ---

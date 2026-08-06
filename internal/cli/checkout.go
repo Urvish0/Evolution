@@ -14,22 +14,28 @@ var checkoutCmd = &cobra.Command{
 	Short: "Switch to a specified branch (or create and switch with -b)",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		branchName := args[0]
+		target := args[0]
 
 		if createBranchFlag {
-			if err := repository.CreateBranch(branchName); err != nil {
+			if err := repository.CreateBranch(target); err != nil {
 				fmt.Printf("Error creating branch: %v\n", err)
 				return
 			}
-			fmt.Printf("Created branch '%s'\n", branchName)
+			fmt.Printf("Created branch '%s'\n", target)
 		}
 
-		if err := repository.CheckoutBranch(branchName); err != nil {
-			fmt.Printf("Error: %v\n", err)
+		if err := repository.CheckoutBranch(target); err == nil {
+			fmt.Printf("Switched to branch '%s'\n", target)
 			return
 		}
 
-		fmt.Printf("Switched to branch '%s'\n", branchName)
+		// Fallback to checking out a specific commit (detached HEAD)
+		if err := repository.CheckoutCommit(target); err == nil {
+			fmt.Printf("HEAD is now at commit '%s' (detached HEAD)\n", target)
+			return
+		}
+
+		fmt.Printf("Error: branch or commit '%s' not found\n", target)
 	},
 }
 

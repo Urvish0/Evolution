@@ -187,3 +187,104 @@ func BuildTreeFromDirectory(dirPath string) (string, error) {
 
 	return WriteTree(tree)
 }
+
+// RestoreTreeToWorkspace recursively writes a Merkle Tree's Blobs and subtrees back to disk.
+func RestoreTreeToWorkspace(treeHash, dirPath string) error {
+	if treeHash == "" {
+		return nil
+	}
+
+	tree, err := ReadTree(treeHash)
+	if err != nil {
+		return fmt.Errorf("reading tree %s: %w", treeHash[:8], err)
+	}
+
+	for _, entry := range tree.Entries {
+		targetPath := filepath.Join(dirPath, entry.Name)
+
+		if entry.Type == ObjectTypeTree {
+			if err := os.MkdirAll(targetPath, 0755); err != nil {
+				return fmt.Errorf("creating directory %s: %w", targetPath, err)
+			}
+			if err := RestoreTreeToWorkspace(entry.Hash, targetPath); err != nil {
+				return err
+			}
+		} else if entry.Type == ObjectTypeBlob {
+			content, err := ReadBlob(entry.Hash)
+			if err != nil {
+				return fmt.Errorf("reading blob %s for %s: %w", entry.Hash[:8], targetPath, err)
+			}
+
+			// Ensure parent directory exists
+			if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+				return fmt.Errorf("creating directory for %s: %w", targetPath, err)
+			}
+
+			if err := os.WriteFile(targetPath, content, 0644); err != nil {
+				return fmt.Errorf("restoring file %s: %w", targetPath, err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// RestoreFileFromHEAD restores a single file from the HEAD commit back to the working directory.
+func RestoreFileFromHEAD(filePath string) error {
+	repo, err := OpenRepository()
+	if err != nil {
+		return fmt.Errorf("opening repo: %w", err)
+	}
+
+	if repo.Branch.Head == "" {
+		return fmt.Errorf("no commits in repository")
+	}
+
+	commit, err := LoadCommit(repo.Branch.Head)
+	if err != nil {
+		return fmt.Errorf("loading HEAD commit: %w", err)
+	}
+
+	cleanPath := filepath.Clean(filePath)
+	parts := strings.Split(cleanPath, string(filepath.Separator))
+
+	// Search recursively in tree
+	currentTreeHash := commit.TreeHash
+	for i, part := range parts {
+		tree, err := ReadTree(currentTreeHash)
+		if err != nil {
+			return fmt.Errorf("reading tree: %w", err)
+		}
+
+		found := false
+		for _, entry := range tree.Entries {
+			if entry.Name == part {
+				found = true
+				if i == len(parts)-1 {
+					// Last part -> must be blob
+					if entry.Type != ObjectTypeBlob {
+						return fmt.Errorf("%s is a directory, not a file", filePath)
+					}
+					content, err := ReadBlob(entry.Hash)
+					if err != nil {
+						return fmt.Errorf("reading blob for %s: %w", filePath, err)
+					}
+					return os.WriteFile(filePath, content, 0644)
+				} else {
+					// Intermediate directory tree
+					if entry.Type != ObjectTypeTree {
+						return fmt.Errorf("invalid tree path for %s", filePath)
+					}
+					currentTreeHash = entry.Hash
+					break
+				}
+			}
+		}
+
+		if !found {
+			return fmt.Errorf("file %q not found in HEAD commit", filePath)
+		}
+	}
+
+	return nil
+}

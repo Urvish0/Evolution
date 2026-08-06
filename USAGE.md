@@ -131,8 +131,14 @@ evo checkout -b exp-claude-sonnet
 evo branch -m exp-claude-v2
 evo branch -m old-branch-name new-branch-name
 
-# Switch active branch
+# Switch active branch and restore physical workspace files on disk
 evo checkout main
+
+# Checkout a specific commit directly (detached HEAD mode)
+evo checkout ed523a4d
+
+# Restore a modified file back to its HEAD committed state
+evo restore prompts/system.txt
 
 # Delete an inactive branch (active branch protected)
 evo branch -d exp-claude-v2
