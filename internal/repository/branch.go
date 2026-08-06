@@ -143,3 +143,86 @@ func DeleteBranch(name string) error {
 
 	return nil
 }
+
+// BranchDetails contains rich metadata for a branch.
+type BranchDetails struct {
+	Name              string `json:"name"`
+	IsActive          bool   `json:"is_active"`
+	HeadCommitID      string `json:"head_commit_id"`
+	LastCommitMessage string `json:"last_commit_message"`
+	LastCommitDate    string `json:"last_commit_date"`
+	CommitCount       int    `json:"commit_count"`
+}
+
+// GetBranchDetails retrieves rich metadata for a given branch by traversing its commit DAG.
+func GetBranchDetails(b Branch) (BranchDetails, error) {
+	currentBranch, _ := GetCurrentBranchName()
+
+	details := BranchDetails{
+		Name:         b.Name,
+		IsActive:     b.Name == currentBranch,
+		HeadCommitID: b.Head,
+	}
+
+	if b.Head == "" {
+		return details, nil
+	}
+
+	// Traversal to count commits and extract latest commit info
+	currID := b.Head
+	count := 0
+	for currID != "" {
+		commit, err := LoadCommit(currID)
+		if err != nil {
+			break
+		}
+
+		if count == 0 {
+			details.LastCommitMessage = commit.Message
+			details.LastCommitDate = commit.Timestamp
+		}
+
+		count++
+		currID = commit.Parent
+	}
+
+	details.CommitCount = count
+	return details, nil
+}
+
+// RenameBranch renames an existing branch. Updates .evolution/HEAD if active branch is renamed.
+func RenameBranch(oldName, newName string) error {
+	if newName == "" {
+		return fmt.Errorf("new branch name cannot be empty")
+	}
+
+	oldPath := filepath.Join(RepositoryDir, BranchesDir, oldName)
+	if _, err := os.Stat(oldPath); os.IsNotExist(err) {
+		return fmt.Errorf("branch %q does not exist", oldName)
+	}
+
+	newPath := filepath.Join(RepositoryDir, BranchesDir, newName)
+	if _, err := os.Stat(newPath); err == nil {
+		return fmt.Errorf("branch %q already exists", newName)
+	}
+
+	branch, err := LoadBranch(oldName)
+	if err != nil {
+		return fmt.Errorf("loading branch %q: %w", oldName, err)
+	}
+
+	branch.Name = newName
+	if err := writeBranch(branch); err != nil {
+		return fmt.Errorf("writing renamed branch %q: %w", newName, err)
+	}
+
+	_ = os.Remove(oldPath)
+
+	// If old branch was the active branch, update HEAD pointer
+	currentBranch, _ := GetCurrentBranchName()
+	if currentBranch == oldName {
+		_ = CheckoutBranch(newName)
+	}
+
+	return nil
+}

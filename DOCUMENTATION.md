@@ -221,26 +221,33 @@ evo diff
 ---
 
 ### `evo branch`
-Lists, creates, or deletes branches.
+Lists, creates, renames, or deletes branches. Renders rich branch metadata (short head commit ID, commit count, and last commit message).
 
 ```bash
-# List branches (* indicates active branch)
+# List all branches with rich details (* indicates active branch)
 evo branch
 
 # Create a new branch
 evo branch -n feature-claude-model
 
-# Delete a branch
-evo branch -d feature-claude-model
+# Rename current branch (or 'evo branch -m old-name new-name')
+evo branch -m exp-claude-sonnet
+
+# Delete an inactive branch (active branch protected)
+evo branch -d exp-claude-sonnet
 ```
 
 ---
 
 ### `evo checkout`
-Switches active branch by updating `.evolution/HEAD`.
+Switches active branch by updating `.evolution/HEAD`. Supports `-b / --create` flag to create and switch in a single command.
 
 ```bash
-evo checkout feature-claude-model
+# Switch to an existing branch
+evo checkout main
+
+# Create a new branch and switch to it immediately
+evo checkout -b exp-prompt-v2
 ```
 
 ---

@@ -113,10 +113,10 @@ evo log --oneline -n 3
 
 ### 7. Branch Management (`evo branch` & `evo checkout`)
 
-Create, list, switch, and delete branches for parallel intelligence experimentation.
+Create, list, rename, switch, and delete branches for parallel intelligence experimentation.
 
 ```bash
-# List all local branches (* indicates current active branch)
+# List all local branches with rich metadata (* indicates active branch)
 evo branch
 
 # Create a new branch
@@ -124,11 +124,18 @@ evo branch -n feature-prompt
 # OR
 evo branch feature-prompt
 
-# Switch active branch
-evo checkout feature-prompt
+# Create AND switch to a new branch in a single command
+evo checkout -b exp-claude-sonnet
 
-# Delete a branch
-evo branch -d feature-prompt
+# Rename current branch or specified branch
+evo branch -m exp-claude-v2
+evo branch -m old-branch-name new-branch-name
+
+# Switch active branch
+evo checkout main
+
+# Delete an inactive branch (active branch protected)
+evo branch -d exp-claude-v2
 ```
 
 ---
