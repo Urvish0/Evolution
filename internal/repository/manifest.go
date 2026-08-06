@@ -131,13 +131,55 @@ func ValidateManifest(m Manifest) error {
 }
 
 // ToArtifactMap converts a Manifest's typed artifacts into a map[string][]Artifact for Commit.
+// If an artifact file exists at Path and Hash is empty, it automatically computes the SHA-256 blob hash.
 func (m Manifest) ToArtifactMap() map[string][]Artifact {
 	artMap := make(map[string][]Artifact)
+
+	autoHashArtifact := func(a Artifact) Artifact {
+		path := a.GetPath()
+		hash := a.GetHash()
+
+		if hash == "" && path != "" {
+			content, err := os.ReadFile(path)
+			if err == nil {
+				hash = HashContent(ObjectTypeBlob, content)
+			}
+		}
+
+		switch typed := a.(type) {
+		case PromptArtifact:
+			typed.Hash = hash
+			_ = SaveArtifact(typed)
+			return typed
+		case MemoryArtifact:
+			typed.Hash = hash
+			_ = SaveArtifact(typed)
+			return typed
+		case RetrievalArtifact:
+			typed.Hash = hash
+			_ = SaveArtifact(typed)
+			return typed
+		case ToolArtifact:
+			typed.Hash = hash
+			_ = SaveArtifact(typed)
+			return typed
+		case ModelConfigArtifact:
+			typed.Hash = hash
+			_ = SaveArtifact(typed)
+			return typed
+		case PolicyArtifact:
+			typed.Hash = hash
+			_ = SaveArtifact(typed)
+			return typed
+		default:
+			return a
+		}
+	}
 
 	if len(m.Artifacts.Prompts) > 0 {
 		var list []Artifact
 		for _, p := range m.Artifacts.Prompts {
-			list = append(list, p)
+			list = append(list, autoHashArtifact(p))
 		}
 		artMap["prompts"] = list
 	}
@@ -145,7 +187,7 @@ func (m Manifest) ToArtifactMap() map[string][]Artifact {
 	if len(m.Artifacts.Memory) > 0 {
 		var list []Artifact
 		for _, mem := range m.Artifacts.Memory {
-			list = append(list, mem)
+			list = append(list, autoHashArtifact(mem))
 		}
 		artMap["memory"] = list
 	}
@@ -153,7 +195,7 @@ func (m Manifest) ToArtifactMap() map[string][]Artifact {
 	if len(m.Artifacts.Retrieval) > 0 {
 		var list []Artifact
 		for _, r := range m.Artifacts.Retrieval {
-			list = append(list, r)
+			list = append(list, autoHashArtifact(r))
 		}
 		artMap["retrieval"] = list
 	}
@@ -161,19 +203,20 @@ func (m Manifest) ToArtifactMap() map[string][]Artifact {
 	if len(m.Artifacts.Tools) > 0 {
 		var list []Artifact
 		for _, t := range m.Artifacts.Tools {
-			list = append(list, t)
+			list = append(list, autoHashArtifact(t))
 		}
 		artMap["tools"] = list
 	}
 
 	if m.Artifacts.ModelConfig != nil {
-		artMap["model_config"] = []Artifact{*m.Artifacts.ModelConfig}
+		mc := autoHashArtifact(*m.Artifacts.ModelConfig)
+		artMap["model_config"] = []Artifact{mc}
 	}
 
 	if len(m.Artifacts.Policies) > 0 {
 		var list []Artifact
 		for _, pol := range m.Artifacts.Policies {
-			list = append(list, pol)
+			list = append(list, autoHashArtifact(pol))
 		}
 		artMap["policies"] = list
 	}

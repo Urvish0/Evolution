@@ -1,0 +1,28 @@
+{
+  "version": "0.1.0",
+  "name": "ai-intelligence",
+  "description": "AI system state",
+  "artifacts": {
+    "prompts": [
+      {
+        "type": "prompt",
+        "name": "legal-prompt",
+        "hash": "",
+        "path": "prompts/system.txt",
+        "role": "system",
+        "format": "text"
+      }
+    ],
+    "model_config": {
+      "type": "model_config",
+      "name": "primary-model",
+      "hash": "",
+      "path": "config/model.json",
+      "model": "gpt-4o",
+      "provider": "openai",
+      "temperature": 0.7,
+      "max_tokens": 4096,
+      "top_p": 0
+    }
+  }
+}
