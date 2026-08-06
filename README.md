@@ -95,6 +95,7 @@ Evolution/
 ├── spec/                # Intelligence Manifest Specification
 ├── docs/                # Design documentation
 ├── .agents/             # AI collaboration rules
+├── DOCUMENTATION.md     # Official Technical Manual & Technical Reference
 ├── USAGE.md             # Complete CLI usage guide
 └── EVOLUTION_MASTER_PLAN.md  # Single source of truth
 ```
@@ -105,7 +106,8 @@ Evolution/
 
 | Document | Purpose |
 |----------|---------|
-| [CLI Usage Guide](USAGE.md) | Complete reference for all CLI commands and workflows |
+| [Official Manual](DOCUMENTATION.md) | Complete technical manual, architecture, CLI reference, and end-to-end tutorials |
+| [CLI Usage Guide](USAGE.md) | Quick reference for CLI commands and workflows |
 | [Master Plan](EVOLUTION_MASTER_PLAN.md) | Roadmap, progress, architecture — single source of truth |
 | [PRD](docs/PRD.md) | Product requirements and vision |
 | [Domain Model](docs/DOMAIN_MODEL.md) | Core entities and relationships |
