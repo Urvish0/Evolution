@@ -264,6 +264,15 @@ evo restore prompts/system.txt
 
 ---
 
+### `evo merge`
+Performs a three-way merge from target branch into the current active branch. Finds Lowest Common Ancestor (LCA) commit in DAG. Supports fast-forward merges, clean 3-way merges, and conflict marker injection (`<<<<<<< OURS` / `=======` / `>>>>>>> THEIRS`).
+
+```bash
+evo merge exp-claude-v2
+```
+
+---
+
 ### `evo manifest`
 Manages the `evolution.manifest.json` file conforming to Spec v0.1.
 

@@ -68,6 +68,7 @@ Everything else is a versioned artifact within that intelligence.
 | `evo manifest` | Manage `evolution.manifest.json` (`init`, `validate`, `show`) | ✅ |
 | `evo artifact` | Manage AI artifacts (`add`, `list`, `show`, `diff`) | ✅ |
 | `evo restore` | Restore files or working tree from HEAD commit | ✅ |
+| `evo merge` | Three-way branch merging with conflict marker injection | ✅ |
 | `evo replay` | Replay historical executions | Planned |
 | `evo evaluate` | Run evaluations | Planned |
 

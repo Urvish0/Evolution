@@ -146,7 +146,18 @@ evo branch -d exp-claude-v2
 
 ---
 
-### 8. Working Tree Comparison (`evo diff`)
+### 8. Branch Merging (`evo merge`)
+
+Performs a three-way merge from target branch into HEAD. Supports fast-forward merges and conflict marker injection (`<<<<<<<` / `=======` / `>>>>>>>`) on line conflicts.
+
+```bash
+# Merge feature branch into current active branch
+evo merge exp-claude-v2
+```
+
+---
+
+### 9. Working Tree Comparison (`evo diff`)
 
 Compares the current workspace files against the last committed Merkle tree snapshot to detect new, modified, and deleted files.
 
