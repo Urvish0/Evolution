@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://evolution.dev/schemas/evolution-manifest-v0.2.json",
+  "title": "Evolution Intelligence Manifest",
+  "description": "Schema for evolution.manifest.json conforming to Intelligence Manifest Specification v0.2",
+  "type": "object",
+  "required": ["version", "name"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Spec version this manifest conforms to (semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the intelligence",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of what this AI system does"
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Collection of typed AI artifacts",
+      "properties": {
+        "prompts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/prompt_artifact" }
+        },
+        "memory": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/memory_artifact" }
+        },
+        "retrieval": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/retrieval_artifact" }
+        },
+        "tools": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/tool_artifact" }
+        },
+        "model_config": {
+          "$ref": "#/$defs/model_config_artifact"
+        },
+        "policies": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/policy_artifact" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Execution context and environment metadata",
+      "properties": {
+        "environment": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "base_artifact": {
+      "type": "object",
+      "required": ["type", "name", "path"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["prompt", "memory", "retrieval", "tool", "model_config", "policy"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash": {
+          "type": "string",
+          "description": "SHA-256 content hash. Empty string allowed; auto-computed at commit time."
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "prompt_artifact": {
+      "allOf": [
+        { "$ref": "#/$defs/base_artifact" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "prompt" },
+            "role": {
+              "type": "string",
+              "enum": ["system", "user", "assistant", "few_shot"]
+            },
+            "format": {
+              "type": "string",
+              "enum": ["text", "template", "jinja2", "mustache"]
+            }
+          }
+        }
+      ]
+    },
+    "memory_artifact": {
+      "allOf": [
+        { "$ref": "#/$defs/base_artifact" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "memory" },
+            "strategy": {
+              "type": "string",
+              "enum": ["buffer_window", "summary", "vector", "graph"]
+            },
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "retrieval_artifact": {
+      "allOf": [
+        { "$ref": "#/$defs/base_artifact" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "retrieval" },
+            "source": {
+              "type": "string",
+              "enum": ["pinecone", "chroma", "weaviate", "local", "elasticsearch"]
+            },
+            "chunk_size": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "top_k": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "tool_artifact": {
+      "allOf": [
+        { "$ref": "#/$defs/base_artifact" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "tool" },
+            "provider": {
+              "type": "string"
+            },
+            "auth_required": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "model_config_artifact": {
+      "allOf": [
+        { "$ref": "#/$defs/base_artifact" },
+        {
+          "type": "object",
+          "required": ["model"],
+          "properties": {
+            "type": { "const": "model_config" },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Model identifier (e.g., gpt-4o, claude-3.5-sonnet)"
+            },
+            "provider": {
+              "type": "string",
+              "enum": ["openai", "anthropic", "google", "local"]
+            },
+            "temperature": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "top_p": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      ]
+    },
+    "policy_artifact": {
+      "allOf": [
+        { "$ref": "#/$defs/base_artifact" },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "policy" },
+            "enforcement": {
+              "type": "string",
+              "enum": ["strict", "warn", "log"]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

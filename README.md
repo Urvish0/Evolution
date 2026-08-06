@@ -115,15 +115,16 @@ Evolution/
 | [Architecture Principles](docs/ARCHITECTURE_PRINCIPLES.md) | Design constraints |
 | [CLI Spec](docs/CLI_SPEC.md) | Command definitions |
 | [ADRs](docs/adr/) | Architecture Decision Records |
-| [Intelligence Manifest Spec](spec/intelligence-manifest-v0.1.md) | Open standard for describing AI system state |
+| [Intelligence Manifest Spec v0.2](spec/intelligence-manifest-v0.2.md) | Open standard for describing AI system state (validated) |
+| [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation |
 
 ---
 
 ## Current Status
 
-> **Phase 3 — Object Model & Content-Addressable Storage** (complete)
+> **Phase 4 — Intelligence Commits & Manifest Implementation** (complete)
 
-Content-addressable storage with SHA-256 hashing, Merkle trees, blob/tree objects, staging area, working tree comparison, content-level diffing, and the Intelligence Manifest Specification v0.1. Next milestone: Intelligence Commits & Manifest Implementation (Phase 4).
+Typed artifact model (6 AI component types), Intelligence Commits with artifacts map and execution metadata, manifest file support (`evo manifest init/validate/show`), artifact CLI commands (`evo artifact add/list/show/diff`), commit tagging (`--tag`) and custom metadata (`--meta`), Intelligence Manifest Spec v0.2 with formal JSON Schema. Next milestone: Branch & Merge Engine (Phase 5).
 
 ---
 
