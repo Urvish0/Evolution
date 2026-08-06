@@ -255,6 +255,25 @@ evo manifest show
 
 ---
 
+### `evo artifact`
+Registers, lists, inspects, and performs semantic diffs on typed AI artifacts (`prompt`, `memory`, `retrieval`, `tool`, `model_config`, `policy`).
+
+```bash
+# Register an artifact in evolution.manifest.json
+evo artifact add prompt sys-prompt prompts/system.txt
+
+# List all AI artifacts attached to HEAD commit
+evo artifact list
+
+# Display raw JSON for a stored artifact
+evo artifact show prompt b671051c
+
+# Perform high-level semantic diff between two commits
+evo artifact diff <commit1_id> <commit2_id>
+```
+
+---
+
 ### `evo version`
 Displays CLI version information.
 

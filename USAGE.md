@@ -159,7 +159,27 @@ evo manifest show
 
 ---
 
-### 10. Version & Help
+### 10. Typed Artifacts (`evo artifact`)
+
+Register, list, inspect, and perform high-level semantic diffs on typed AI artifacts.
+
+```bash
+# Register an artifact in evolution.manifest.json
+evo artifact add prompt sys-prompt prompts/system.txt
+
+# List all AI artifacts attached to the current HEAD commit
+evo artifact list
+
+# Display JSON content of a stored artifact
+evo artifact show prompt b671051c
+
+# Perform high-level semantic diff between two commits
+evo artifact diff <commit1_id> <commit2_id>
+```
+
+---
+
+### 11. Version & Help
 
 ```bash
 # Display CLI version
@@ -168,6 +188,7 @@ evo version
 # Display help for any command
 evo --help
 evo commit --help
+evo artifact --help
 evo manifest --help
 ```
 

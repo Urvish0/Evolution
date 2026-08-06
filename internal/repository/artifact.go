@@ -188,3 +188,225 @@ func LoadArtifact(artType, hash string) (Artifact, error) {
 		return nil, fmt.Errorf("unknown artifact type %q", artType)
 	}
 }
+
+// SemanticDiffChange describes a high-level AI component difference between two commits.
+type SemanticDiffChange struct {
+	Category     string `json:"category"`
+	ArtifactName string `json:"artifact_name"`
+	Action       string `json:"action"` // "added", "removed", "modified"
+	Details      string `json:"details"`
+}
+
+// RegisterArtifactInManifest adds or updates an artifact entry inside evolution.manifest.json.
+func RegisterArtifactInManifest(artType, name, path string) error {
+	var m Manifest
+	if ManifestExists() {
+		var err error
+		m, err = LoadManifest(ManifestFileName)
+		if err != nil {
+			return err
+		}
+	} else {
+		m = NewDefaultManifest("ai-intelligence", "AI system state")
+	}
+
+	base := BaseArtifact{
+		ArtifactType: artType,
+		Name:         name,
+		Path:         path,
+	}
+
+	switch artType {
+	case ArtifactTypePrompt:
+		// Check if entry already exists, update or append
+		found := false
+		for i, p := range m.Artifacts.Prompts {
+			if p.Name == name {
+				m.Artifacts.Prompts[i].Path = path
+				found = true
+				break
+			}
+		}
+		if !found {
+			m.Artifacts.Prompts = append(m.Artifacts.Prompts, PromptArtifact{
+				BaseArtifact: base,
+				Role:         "system",
+				Format:       "text",
+			})
+		}
+
+	case ArtifactTypeModelConfig:
+		m.Artifacts.ModelConfig = &ModelConfigArtifact{
+			BaseArtifact: base,
+			Model:        "gpt-4o",
+			Provider:     "openai",
+			Temperature:  0.7,
+			MaxTokens:    4096,
+		}
+
+	case ArtifactTypeTool:
+		found := false
+		for i, t := range m.Artifacts.Tools {
+			if t.Name == name {
+				m.Artifacts.Tools[i].Path = path
+				found = true
+				break
+			}
+		}
+		if !found {
+			m.Artifacts.Tools = append(m.Artifacts.Tools, ToolArtifact{
+				BaseArtifact: base,
+				Provider:     "custom",
+				AuthRequired: false,
+			})
+		}
+
+	case ArtifactTypeMemory:
+		found := false
+		for i, mem := range m.Artifacts.Memory {
+			if mem.Name == name {
+				m.Artifacts.Memory[i].Path = path
+				found = true
+				break
+			}
+		}
+		if !found {
+			m.Artifacts.Memory = append(m.Artifacts.Memory, MemoryArtifact{
+				BaseArtifact: base,
+				Strategy:     "buffer_window",
+				MaxTokens:    4096,
+			})
+		}
+
+	case ArtifactTypeRetrieval:
+		found := false
+		for i, r := range m.Artifacts.Retrieval {
+			if r.Name == name {
+				m.Artifacts.Retrieval[i].Path = path
+				found = true
+				break
+			}
+		}
+		if !found {
+			m.Artifacts.Retrieval = append(m.Artifacts.Retrieval, RetrievalArtifact{
+				BaseArtifact: base,
+				Source:       "local",
+				ChunkSize:    512,
+				TopK:         5,
+			})
+		}
+
+	case ArtifactTypePolicy:
+		found := false
+		for i, pol := range m.Artifacts.Policies {
+			if pol.Name == name {
+				m.Artifacts.Policies[i].Path = path
+				found = true
+				break
+			}
+		}
+		if !found {
+			m.Artifacts.Policies = append(m.Artifacts.Policies, PolicyArtifact{
+				BaseArtifact: base,
+				Enforcement:  "strict",
+			})
+		}
+
+	default:
+		return fmt.Errorf("invalid artifact type %q", artType)
+	}
+
+	return SaveManifest(m, ManifestFileName)
+}
+
+// GetHeadCommitArtifacts returns the artifacts map attached to the current HEAD commit.
+func GetHeadCommitArtifacts() (map[string][]Artifact, error) {
+	repo, err := OpenRepository()
+	if err != nil {
+		return nil, fmt.Errorf("opening repository: %w", err)
+	}
+
+	if repo.Branch.Head == "" {
+		return nil, fmt.Errorf("no commits in repository")
+	}
+
+	commit, err := LoadCommit(repo.Branch.Head)
+	if err != nil {
+		return nil, fmt.Errorf("loading HEAD commit: %w", err)
+	}
+
+	return commit.Artifacts, nil
+}
+
+// CompareCommitArtifacts performs a high-level semantic diff between two commits.
+func CompareCommitArtifacts(commitID1, commitID2 string) ([]SemanticDiffChange, error) {
+	c1, err := LoadCommit(commitID1)
+	if err != nil {
+		return nil, fmt.Errorf("loading commit %s: %w", commitID1[:8], err)
+	}
+
+	c2, err := LoadCommit(commitID2)
+	if err != nil {
+		return nil, fmt.Errorf("loading commit %s: %w", commitID2[:8], err)
+	}
+
+	var changes []SemanticDiffChange
+
+	allCategories := map[string]bool{
+		"prompts": true, "model_config": true, "tools": true,
+		"memory": true, "retrieval": true, "policies": true,
+	}
+
+	for category := range allCategories {
+		list1 := c1.Artifacts[category]
+		list2 := c2.Artifacts[category]
+
+		map1 := make(map[string]Artifact)
+		for _, a := range list1 {
+			map1[a.GetName()] = a
+		}
+
+		map2 := make(map[string]Artifact)
+		for _, a := range list2 {
+			map2[a.GetName()] = a
+		}
+
+		// Check for added or modified artifacts in commit 2
+		for name, a2 := range map2 {
+			a1, exists := map1[name]
+			if !exists {
+				changes = append(changes, SemanticDiffChange{
+					Category:     category,
+					ArtifactName: name,
+					Action:       "added",
+					Details:      fmt.Sprintf("New %s registered at path '%s'", category, a2.GetPath()),
+				})
+			} else {
+				data1, _ := a1.Serialize()
+				data2, _ := a2.Serialize()
+				if string(data1) != string(data2) {
+					changes = append(changes, SemanticDiffChange{
+						Category:     category,
+						ArtifactName: name,
+						Action:       "modified",
+						Details:      fmt.Sprintf("Configuration changed for '%s'", name),
+					})
+				}
+			}
+		}
+
+		// Check for removed artifacts in commit 2
+		for name := range map1 {
+			if _, exists := map2[name]; !exists {
+				changes = append(changes, SemanticDiffChange{
+					Category:     category,
+					ArtifactName: name,
+					Action:       "removed",
+					Details:      fmt.Sprintf("%s '%s' was removed", category, name),
+				})
+			}
+		}
+	}
+
+	return changes, nil
+}

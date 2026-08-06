@@ -66,6 +66,7 @@ Everything else is a versioned artifact within that intelligence.
 | `evo version` | Display CLI version | ✅ |
 | `evo diff` | Compare working tree against HEAD | ✅ |
 | `evo manifest` | Manage `evolution.manifest.json` (`init`, `validate`, `show`) | ✅ |
+| `evo artifact` | Manage AI artifacts (`add`, `list`, `show`, `diff`) | ✅ |
 | `evo replay` | Replay historical executions | Planned |
 | `evo evaluate` | Run evaluations | Planned |
 
