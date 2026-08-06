@@ -79,10 +79,14 @@ evo add .
 
 ### 5. Creating Intelligence Commits (`evo commit`)
 
-Creates an immutable commit snapshot. Automatically captures staged files from the Staging Area (`.evolution/index`) as a Merkle tree of hashed Blobs (`.evolution/objects/xx/yyyy...`), linking the root tree hash (`tree_hash`) to your commit along with your author identity, timestamp, and parent commit.
+Creates an immutable commit snapshot. Automatically captures staged files from the Staging Area (`.evolution/index`) as a Merkle tree of hashed Blobs (`.evolution/objects/xx/yyyy...`), auto-detects `evolution.manifest.json`, and links attached artifacts, tags (`--tag`), and execution metadata (`--meta key=val`).
 
 ```bash
+# Basic commit
 evo commit -m "Initial intelligence setup"
+
+# Commit with tags and custom execution metadata
+evo commit -m "Deployed v1 prompt" --tag production --tag v1.0 --meta model=gpt-4o --meta temp=0.2
 ```
 
 ---

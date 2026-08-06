@@ -162,13 +162,19 @@ evo add .
 ---
 
 ### `evo commit`
-Creates an immutable Intelligence Commit snapshot. Automatically checks for `evolution.manifest.json` and attaches declared artifacts.
+Creates an immutable Intelligence Commit snapshot. Automatically checks for `evolution.manifest.json` and attaches declared artifacts, tag labels, and execution metadata.
 
 ```bash
+# Basic commit
 evo commit -m "Updated system prompt and temperature settings"
+
+# Commit with tags and custom execution metadata
+evo commit -m "Promoted prompt to production" --tag production --tag v1.0 --meta model=gpt-4o --meta temp=0.2
 ```
 **Flags:**
 - `-m, --message <string>` (Required): Commit description message.
+- `-t, --tag <string>` (Optional, repeatable): Tag labels attached to the commit.
+- `--meta <key=value>` (Optional, repeatable): Custom execution metadata key-value pairs.
 
 ---
 

@@ -46,10 +46,17 @@ var logCmd = &cobra.Command{
 				shortID = shortID[:8]
 			}
 
+			tagStr := ""
+			if len(commit.Metadata.Tags) > 0 {
+				for _, t := range commit.Metadata.Tags {
+					tagStr += fmt.Sprintf(" %s[%s]%s", colorGreen, t, colorReset)
+				}
+			}
+
 			if onelineFlag {
-				fmt.Printf("%s%s%s %s\n", colorYellow, shortID, colorReset, commit.Message)
+				fmt.Printf("%s%s%s%s %s\n", colorYellow, shortID, colorReset, tagStr, commit.Message)
 			} else {
-				fmt.Printf("%scommit %s%s\n", colorYellow, shortID, colorReset)
+				fmt.Printf("%scommit %s%s%s\n", colorYellow, shortID, colorReset, tagStr)
 				if commit.TreeHash != "" {
 					shortTree := commit.TreeHash
 					if len(shortTree) > 8 {
@@ -60,8 +67,17 @@ var logCmd = &cobra.Command{
 				if commit.Author != "" {
 					fmt.Printf("Author: %s%s%s\n", colorCyan, commit.Author, colorReset)
 				}
-				fmt.Printf("Date:   %s%s%s\n\n", colorGray, commit.Timestamp, colorReset)
-				fmt.Printf("    %s\n\n", commit.Message)
+				fmt.Printf("Date:   %s%s%s\n", colorGray, commit.Timestamp, colorReset)
+
+				if len(commit.Metadata.Environment) > 0 {
+					metaStr := ""
+					for k, v := range commit.Metadata.Environment {
+						metaStr += fmt.Sprintf("%s=%s ", k, v)
+					}
+					fmt.Printf("Meta:   %s%s%s\n", colorGray, metaStr, colorReset)
+				}
+
+				fmt.Printf("\n    %s\n\n", commit.Message)
 			}
 		}
 	},

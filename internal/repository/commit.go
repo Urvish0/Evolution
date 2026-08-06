@@ -187,7 +187,13 @@ func WriteCommit(commit Commit) error {
 	return os.WriteFile(commitPath, data, 0644)
 }
 
+// CreateCommit creates a basic commit with a message.
 func CreateCommit(message string) error {
+	return CreateCommitWithOpts(message, nil, nil)
+}
+
+// CreateCommitWithOpts creates an Intelligence Commit with optional tags and custom execution metadata.
+func CreateCommitWithOpts(message string, tags []string, customMeta map[string]string) error {
 	repo, err := OpenRepository()
 	if err != nil {
 		return fmt.Errorf("opening repo for commit: %w", err)
@@ -195,6 +201,21 @@ func CreateCommit(message string) error {
 
 	commit := NewCommit(message)
 	commit.Parent = repo.Branch.Head
+
+	// Attach tags if provided
+	if len(tags) > 0 {
+		commit.Metadata.Tags = append(commit.Metadata.Tags, tags...)
+	}
+
+	// Merge custom metadata key-value pairs
+	if len(customMeta) > 0 {
+		if commit.Metadata.Environment == nil {
+			commit.Metadata.Environment = make(map[string]string)
+		}
+		for k, v := range customMeta {
+			commit.Metadata.Environment[k] = v
+		}
+	}
 
 	// Capture workspace snapshot Merkle Tree hash
 	var treeHash string

@@ -100,3 +100,35 @@ func TestIntelligenceCommitArtifactsSerialization(t *testing.T) {
 		t.Errorf("expected model 'gpt-4o', got %q", modelArt.Model)
 	}
 }
+
+func TestCommitWithOptsTagsAndMeta(t *testing.T) {
+	setupTestRepo(t)
+
+	if err := Init(); err != nil {
+		t.Fatalf("Init() failed: %v", err)
+	}
+
+	tags := []string{"production", "v1.0"}
+	meta := map[string]string{
+		"model":       "gpt-4o",
+		"temperature": "0.2",
+	}
+
+	if err := CreateCommitWithOpts("Tagged commit", tags, meta); err != nil {
+		t.Fatalf("CreateCommitWithOpts() failed: %v", err)
+	}
+
+	repo, _ := OpenRepository()
+	commit, err := LoadCommit(repo.Branch.Head)
+	if err != nil {
+		t.Fatalf("LoadCommit() failed: %v", err)
+	}
+
+	if len(commit.Metadata.Tags) != 2 || commit.Metadata.Tags[0] != "production" {
+		t.Errorf("expected tags [production v1.0], got %v", commit.Metadata.Tags)
+	}
+
+	if commit.Metadata.Environment["model"] != "gpt-4o" {
+		t.Errorf("expected custom meta model 'gpt-4o', got %q", commit.Metadata.Environment["model"])
+	}
+}
