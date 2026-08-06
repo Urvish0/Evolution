@@ -157,13 +157,19 @@ evo merge exp-claude-v2
 
 ---
 
-### 9. Working Tree Comparison (`evo diff`)
+### 9. Diff Engine (`evo diff`)
 
-Compares the current workspace files against the last committed Merkle tree snapshot to detect new, modified, and deleted files.
+Compares file content line-by-line between the working tree and HEAD, or between arbitrary revisions (branches or commits).
 
 ```bash
-# Show all changes vs HEAD
+# Working tree vs HEAD commit
 evo diff
+
+# Compare active branch against another branch
+evo diff main feature-prompt
+
+# Compare two historical commits by short ID or UUID
+evo diff 74530642 58e45843
 ```
 
 *Output shows `[staged]`, `[modified]`, `[deleted]`, and `[new]` file labels with color coding.*

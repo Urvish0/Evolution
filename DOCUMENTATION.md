@@ -204,15 +204,22 @@ Date:   2026-08-06T12:30:00Z
 ---
 
 ### `evo diff`
-Shows line-by-line unified content diffs (`--- a/` / `+++ b/`) for modified tracked files between the working directory and HEAD commit.
+Shows line-by-line unified content diffs (`--- a/` / `+++ b/`) between working tree and HEAD, or across arbitrary revisions (branches or commits).
 
 ```bash
+# Working tree vs HEAD commit
 evo diff
+
+# Compare active branch against feature branch
+evo diff main feature-prompt
+
+# Compare two historical commits by short ID or UUID
+evo diff 74530642 58e45843
 ```
 **Example Output:**
 ```text
---- a/prompts/system.txt
-+++ b/prompts/system.txt
+--- a/prompts/system.txt (main)
++++ b/prompts/system.txt (feature)
 @@ -1 +1 @@
 -System Prompt: You are a helpful assistant.
 +System Prompt: You are a legal research AI. Always cite sources.

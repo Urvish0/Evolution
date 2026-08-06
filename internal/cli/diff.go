@@ -8,23 +8,54 @@ import (
 )
 
 var diffCmd = &cobra.Command{
-	Use:   "diff",
-	Short: "Show changes between working tree and HEAD",
-	Long:  "Shows line-by-line content differences for modified tracked files between the working tree and the last commit.",
+	Use:   "diff [rev1] [rev2]",
+	Short: "Show changes between working tree and HEAD, or between revisions/branches",
+	Long:  "Compares content line-by-line.\nNo args: working tree vs HEAD\n1 arg: HEAD vs revision\n2 args: revision1 vs revision2",
+	Args:  cobra.MaximumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		if !repository.Exists() {
 			fmt.Println("Error: Not an Evolution repository (run 'evo init' first)")
 			return
 		}
 
+		// Case 1: Two revisions provided (evo diff rev1 rev2)
+		if len(args) == 2 {
+			diffOutput, err := repository.GetRevisionDiff(args[0], args[1])
+			if err != nil {
+				fmt.Printf("Error: %v\n", err)
+				return
+			}
+			if diffOutput == "" {
+				fmt.Println("No differences found.")
+				return
+			}
+			fmt.Print(diffOutput)
+			return
+		}
+
+		// Case 2: One revision provided (evo diff rev1) -> compare HEAD vs rev1
+		if len(args) == 1 {
+			currentBranch, _ := repository.GetCurrentBranchName()
+			diffOutput, err := repository.GetRevisionDiff(currentBranch, args[0])
+			if err != nil {
+				fmt.Printf("Error: %v\n", err)
+				return
+			}
+			if diffOutput == "" {
+				fmt.Println("No differences found.")
+				return
+			}
+			fmt.Print(diffOutput)
+			return
+		}
+
+		// Case 3: 0 args -> Working tree vs HEAD
 		wts, err := repository.CompareWorkingTree()
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
 
-		// evo diff only shows content diffs for modified tracked files
-		// Use 'evo status' for untracked/staged/deleted file lists
 		if len(wts.Modified) == 0 {
 			fmt.Println("No modified files.")
 			return
@@ -37,7 +68,6 @@ var diffCmd = &cobra.Command{
 				continue
 			}
 
-			// Count additions and deletions
 			adds, dels := 0, 0
 			for _, d := range diffLines {
 				if d.Op == repository.DiffInsert {
@@ -47,12 +77,10 @@ var diffCmd = &cobra.Command{
 				}
 			}
 
-			// File header (like git diff)
 			fmt.Printf("%s--- a/%s%s\n", colorRed, f.Path, colorReset)
 			fmt.Printf("%s+++ b/%s%s\n", colorGreen, f.Path, colorReset)
 			fmt.Printf("%s@@ -%d +%d @@%s\n", colorCyan, dels, adds, colorReset)
 
-			// Content lines
 			for _, line := range diffLines {
 				switch line.Op {
 				case repository.DiffDelete:

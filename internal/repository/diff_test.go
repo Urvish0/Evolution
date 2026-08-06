@@ -138,3 +138,46 @@ func TestCompareWorkingTreeClean(t *testing.T) {
 			len(wts.Staged), len(wts.Modified), len(wts.Untracked), len(wts.Deleted))
 	}
 }
+
+func TestCrossRevisionDiff(t *testing.T) {
+	setupTestRepo(t)
+
+	if err := Init(); err != nil {
+		t.Fatalf("Init() failed: %v", err)
+	}
+
+	_ = os.WriteFile("p.txt", []byte("Prompt V1"), 0644)
+	_ = StagePath("p.txt")
+	_ = CreateCommit("Commit V1")
+	repo1, _ := OpenRepository()
+	c1ID := repo1.Branch.Head
+
+	_ = CreateBranch("exp")
+	_ = CheckoutBranch("exp")
+	_ = os.WriteFile("p.txt", []byte("Prompt V2 Exp"), 0644)
+	_ = StagePath("p.txt")
+	_ = CreateCommit("Commit V2 Exp")
+	repo2, _ := OpenRepository()
+	c2ID := repo2.Branch.Head
+
+	// Test ResolveRevisionToCommit
+	c1, err := ResolveRevisionToCommit("main")
+	if err != nil || c1.ID != c1ID {
+		t.Errorf("failed to resolve main branch to commit")
+	}
+
+	c2, err := ResolveRevisionToCommit(c2ID[:8])
+	if err != nil || c2.ID != c2ID {
+		t.Errorf("failed to resolve short commit hash %s", c2ID[:8])
+	}
+
+	// Test GetRevisionDiff between main and exp branches
+	diffStr, err := GetRevisionDiff("main", "exp")
+	if err != nil {
+		t.Fatalf("GetRevisionDiff() failed: %v", err)
+	}
+
+	if !os.IsNotExist(err) && (len(diffStr) == 0) {
+		t.Errorf("expected cross-branch diff output")
+	}
+}

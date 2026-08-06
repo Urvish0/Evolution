@@ -124,9 +124,9 @@ Evolution/
 
 ## Current Status
 
-> **Phase 4 — Intelligence Commits & Manifest Implementation** (complete)
+> **Phase 5 — Branch & Merge Engine** (complete)
 
-Typed artifact model (6 AI component types), Intelligence Commits with artifacts map and execution metadata, manifest file support (`evo manifest init/validate/show`), artifact CLI commands (`evo artifact add/list/show/diff`), commit tagging (`--tag`) and custom metadata (`--meta`), Intelligence Manifest Spec v0.2 with formal JSON Schema. Next milestone: Branch & Merge Engine (Phase 5).
+Rich branch management (`evo branch` listing with metadata, `-m` rename), `evo checkout -b` shortcut, workspace file restoration from Merkle tree snapshots, detached HEAD checkout, file restoration (`evo restore <file>`), Three-Way Merge Engine with Lowest Common Ancestor (LCA) DAG traversal, fast-forward merges, line-by-line 3-way merge with conflict marker injection (`<<<<<<<` / `=======` / `>>>>>>>`), and cross-branch / cross-commit diffing (`evo diff rev1 rev2`). Next milestone: Execution Engine & Deterministic Replay (Phase 6).
 
 ---
 

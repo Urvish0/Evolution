@@ -212,3 +212,104 @@ func GetContentDiff(filePath string) ([]DiffLine, error) {
 
 	return ComputeLineDiff(string(oldContent), string(newContent)), nil
 }
+
+// ResolveRevisionToCommit resolves a branch name, full commit UUID, or short 8-char commit prefix into a Commit struct.
+func ResolveRevisionToCommit(rev string) (Commit, error) {
+	var commit Commit
+
+	// 1. Try branch name
+	branch, err := LoadBranch(rev)
+	if err == nil && branch.Head != "" {
+		return LoadCommit(branch.Head)
+	}
+
+	// 2. Try exact commit ID
+	commit, err = LoadCommit(rev)
+	if err == nil {
+		return commit, nil
+	}
+
+	// 3. Try short commit ID prefix match
+	if len(rev) < 36 {
+		commitsDir := filepath.Join(RepositoryDir, CommitsDir)
+		entries, err := os.ReadDir(commitsDir)
+		if err == nil {
+			for _, entry := range entries {
+				if strings.HasPrefix(entry.Name(), rev) {
+					id := strings.TrimSuffix(entry.Name(), ".json")
+					return LoadCommit(id)
+				}
+			}
+		}
+	}
+
+	return commit, fmt.Errorf("revision %q not found", rev)
+}
+
+// GetRevisionDiff returns a formatted unified diff comparing two revisions (branches or commits).
+func GetRevisionDiff(rev1, rev2 string) (string, error) {
+	c1, err := ResolveRevisionToCommit(rev1)
+	if err != nil {
+		return "", fmt.Errorf("resolving revision %s: %w", rev1, err)
+	}
+
+	c2, err := ResolveRevisionToCommit(rev2)
+	if err != nil {
+		return "", fmt.Errorf("resolving revision %s: %w", rev2, err)
+	}
+
+	files1, _ := GetFlatTreeEntries(c1.TreeHash, "")
+	files2, _ := GetFlatTreeEntries(c2.TreeHash, "")
+
+	allFiles := make(map[string]bool)
+	for f := range files1 {
+		allFiles[f] = true
+	}
+	for f := range files2 {
+		allFiles[f] = true
+	}
+
+	var buf strings.Builder
+	for file := range allFiles {
+		h1 := files1[file]
+		h2 := files2[file]
+
+		if h1 == h2 {
+			continue // No change
+		}
+
+		var content1, content2 []byte
+		if h1 != "" {
+			content1, _ = ReadBlob(h1)
+		}
+		if h2 != "" {
+			content2, _ = ReadBlob(h2)
+		}
+
+		diffLines := ComputeLineDiff(string(content1), string(content2))
+		buf.WriteString(fmt.Sprintf("--- a/%s (%s)\n", file, rev1[:min(8, len(rev1))]))
+		buf.WriteString(fmt.Sprintf("+++ b/%s (%s)\n", file, rev2[:min(8, len(rev2))]))
+		buf.WriteString("@@ -1 +1 @@\n")
+
+		for _, dl := range diffLines {
+			switch dl.Op {
+			case DiffInsert:
+				buf.WriteString(fmt.Sprintf("+%s\n", dl.Content))
+			case DiffDelete:
+				buf.WriteString(fmt.Sprintf("-%s\n", dl.Content))
+			case DiffEqual:
+				buf.WriteString(fmt.Sprintf(" %s\n", dl.Content))
+			}
+		}
+		buf.WriteString("\n")
+	}
+
+	return buf.String(), nil
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
