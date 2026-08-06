@@ -65,6 +65,7 @@ Everything else is a versioned artifact within that intelligence.
 | `evo checkout` | Switch active branch | ✅ |
 | `evo version` | Display CLI version | ✅ |
 | `evo diff` | Compare working tree against HEAD | ✅ |
+| `evo manifest` | Manage `evolution.manifest.json` (`init`, `validate`, `show`) | ✅ |
 | `evo replay` | Replay historical executions | Planned |
 | `evo evaluate` | Run evaluations | Planned |
 

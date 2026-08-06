@@ -213,6 +213,16 @@ func CreateCommit(message string) error {
 	}
 	commit.TreeHash = treeHash
 
+	// Auto-detect evolution.manifest.json if present
+	if ManifestExists() {
+		m, err := LoadManifest(ManifestFileName)
+		if err == nil {
+			if err := ValidateManifest(m); err == nil {
+				commit.Artifacts = m.ToArtifactMap()
+			}
+		}
+	}
+
 	userCfg, _ := LoadUserConfig()
 	if userCfg.Name != "" {
 		if userCfg.Email != "" {

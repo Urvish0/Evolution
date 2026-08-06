@@ -142,7 +142,24 @@ evo diff
 
 ---
 
-### 9. Version & Help
+### 9. Intelligence Manifest (`evo manifest`)
+
+Manage the `evolution.manifest.json` file conforming to the Intelligence Manifest Specification v0.1.
+
+```bash
+# Generate starter manifest file
+evo manifest init --name "my-ai-agent" --description "Legal assistant AI"
+
+# Validate manifest against Spec v0.1 schema
+evo manifest validate
+
+# Display active workspace manifest JSON
+evo manifest show
+```
+
+---
+
+### 10. Version & Help
 
 ```bash
 # Display CLI version
@@ -151,7 +168,7 @@ evo version
 # Display help for any command
 evo --help
 evo commit --help
-evo branch --help
+evo manifest --help
 ```
 
 ---
