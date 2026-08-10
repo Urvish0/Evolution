@@ -315,6 +315,22 @@ evo artifact diff <commit1_id> <commit2_id>
 
 ---
 
+### `evo record` & `evo execution`
+Records an AI execution run bound to current HEAD commit, and lists or displays recorded JSON details.
+
+```bash
+# Record an execution run
+evo record -i "What is corporate law?" -o "Corporate law governs company formation." --tokens-prompt 100 --tokens-completion 50 --duration 450
+
+# List all recorded executions
+evo execution list
+
+# Display full JSON details for an execution
+evo execution show <execution_id>
+```
+
+---
+
 ### `evo version`
 Displays CLI version information.
 

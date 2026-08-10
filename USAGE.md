@@ -213,7 +213,24 @@ evo artifact diff <commit1_id> <commit2_id>
 
 ---
 
-### 11. Version & Help
+### 11. Execution Recording (`evo record` & `evo execution`)
+
+Record and inspect AI system executions bound to the active HEAD commit snapshot.
+
+```bash
+# Record an AI execution run
+evo record -i "What is corporate law?" -o "Corporate law governs company formation." --tokens-prompt 100 --tokens-completion 50 --duration 450
+
+# List recorded executions
+evo execution list
+
+# Display full JSON details for an execution
+evo execution show <execution_id>
+```
+
+---
+
+### 12. Version & Help
 
 ```bash
 # Display CLI version
@@ -224,6 +241,8 @@ evo --help
 evo commit --help
 evo artifact --help
 evo manifest --help
+evo record --help
+evo execution --help
 ```
 
 ---
