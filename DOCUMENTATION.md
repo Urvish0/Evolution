@@ -331,6 +331,22 @@ evo execution show <execution_id>
 
 ---
 
+### `evo replay`
+Reconstructs the complete operational state of an Intelligence Commit without modifying working directory files. Supports manifest export (`--export`) and execution verification (`--execution`).
+
+```bash
+# Reconstruct state from commit or branch
+evo replay 58e45843
+
+# Reconstruct and export to manifest JSON file
+evo replay 58e45843 --export evolution.manifest.json
+
+# Replay and verify state for a recorded execution ID
+evo replay --execution 92c91ed0
+```
+
+---
+
 ### `evo version`
 Displays CLI version information.
 

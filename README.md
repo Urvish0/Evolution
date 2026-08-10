@@ -71,7 +71,7 @@ Everything else is a versioned artifact within that intelligence.
 | `evo merge` | Three-way branch merging with conflict marker injection | ✅ |
 | `evo record` | Record an AI execution run bound to HEAD commit | ✅ |
 | `evo execution` | List and inspect recorded AI executions | ✅ |
-| `evo replay` | Replay historical executions | Planned |
+| `evo replay` | Reconstruct and replay historical AI states | ✅ |
 | `evo evaluate` | Run evaluations | Planned |
 
 ---

@@ -230,7 +230,28 @@ evo execution show <execution_id>
 
 ---
 
-### 12. Version & Help
+### 12. Replay Engine (`evo replay`)
+
+Reconstruct historical AI system state from any Intelligence Commit, export manifest, or verify against a recorded execution.
+
+```bash
+# Reconstruct state from active branch HEAD
+evo replay
+
+# Reconstruct state from a specific commit or branch
+evo replay 58e45843
+evo replay exp-claude-model
+
+# Export reconstructed state as a manifest JSON file
+evo replay 58e45843 --export evolution.manifest.json
+
+# Replay and verify state against a recorded execution ID
+evo replay --execution 92c91ed0
+```
+
+---
+
+### 13. Version & Help
 
 ```bash
 # Display CLI version
@@ -243,6 +264,7 @@ evo artifact --help
 evo manifest --help
 evo record --help
 evo execution --help
+evo replay --help
 ```
 
 ---
