@@ -338,11 +338,39 @@ Reconstructs the complete operational state of an Intelligence Commit without mo
 # Reconstruct state from commit or branch
 evo replay 58e45843
 
+# Compare reconstructed intelligence states across two commits or branches
+evo replay main exp-claude-model
+
+# Compare two recorded executions side-by-side (metrics + output text diff)
+evo replay --compare-executions exec1,exec2
+
 # Reconstruct and export to manifest JSON file
 evo replay 58e45843 --export evolution.manifest.json
 
 # Replay and verify state for a recorded execution ID
 evo replay --execution 92c91ed0
+```
+
+---
+
+### `evo evaluate`
+Evaluates latency (Performance), financial cost (Cost), safety guardrails (Safety), and response accuracy (Correctness) for an execution run.
+
+```bash
+# Evaluate an execution run by ID
+evo evaluate 92c91ed0
+
+# Evaluate all recorded executions for a commit or branch
+evo evaluate 58e45843
+
+# Compare evaluation scores across two commits/branches (with score trend indicators)
+evo evaluate --compare main exp-claude-model
+
+# List all recorded evaluation results
+evo evaluate list
+
+# Display full JSON evaluation report
+evo evaluate show <eval_id>
 ```
 
 ---

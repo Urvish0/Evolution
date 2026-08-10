@@ -110,3 +110,61 @@ func ReplayExecution(executionID string) (*ReconstructedState, Execution, error)
 
 	return state, exec, nil
 }
+
+// ExecutionComparison holds metrics and text differences between two execution runs.
+type ExecutionComparison struct {
+	Exec1            Execution  `json:"execution_1"`
+	Exec2            Execution  `json:"execution_2"`
+	PromptTokenDelta int        `json:"prompt_token_delta"`
+	CompTokenDelta   int        `json:"comp_token_delta"`
+	TotalTokenDelta  int        `json:"total_token_delta"`
+	DurationDeltaMs  int64      `json:"duration_delta_ms"`
+	OutputDiffLines  []DiffLine `json:"output_diff_lines"`
+}
+
+// CompareExecutions compares two recorded execution runs side-by-side.
+func CompareExecutions(id1, id2 string) (*ExecutionComparison, error) {
+	e1, err := LoadExecution(id1)
+	if err != nil {
+		return nil, fmt.Errorf("loading execution 1 (%s): %w", id1, err)
+	}
+
+	e2, err := LoadExecution(id2)
+	if err != nil {
+		return nil, fmt.Errorf("loading execution 2 (%s): %w", id2, err)
+	}
+
+	diffLines := ComputeLineDiff(e1.Outputs, e2.Outputs)
+
+	comp := &ExecutionComparison{
+		Exec1:            e1,
+		Exec2:            e2,
+		PromptTokenDelta: e2.Tokens.PromptTokens - e1.Tokens.PromptTokens,
+		CompTokenDelta:   e2.Tokens.CompletionTokens - e1.Tokens.CompletionTokens,
+		TotalTokenDelta:  e2.Tokens.TotalTokens - e1.Tokens.TotalTokens,
+		DurationDeltaMs:  e2.DurationMs - e1.DurationMs,
+		OutputDiffLines:  diffLines,
+	}
+
+	return comp, nil
+}
+
+// CompareCommitReplays reconstructs both commit states and compares their intelligence artifacts.
+func CompareCommitReplays(target1, target2 string) (*ReconstructedState, *ReconstructedState, []SemanticDiffChange, error) {
+	s1, err := ReconstructCommitState(target1)
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("reconstructing target 1 (%s): %w", target1, err)
+	}
+
+	s2, err := ReconstructCommitState(target2)
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("reconstructing target 2 (%s): %w", target2, err)
+	}
+
+	changes, err := CompareCommitArtifacts(s1.CommitID, s2.CommitID)
+	if err != nil {
+		return s1, s2, nil, fmt.Errorf("comparing artifacts: %w", err)
+	}
+
+	return s1, s2, changes, nil
+}

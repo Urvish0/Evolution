@@ -242,6 +242,12 @@ evo replay
 evo replay 58e45843
 evo replay exp-claude-model
 
+# Compare reconstructed intelligence states across two commits/branches
+evo replay main exp-claude-model
+
+# Side-by-side comparison of two recorded executions (tokens, latency, output text)
+evo replay --compare-executions exec_id1,exec_id2
+
 # Export reconstructed state as a manifest JSON file
 evo replay 58e45843 --export evolution.manifest.json
 
@@ -251,7 +257,33 @@ evo replay --execution 92c91ed0
 
 ---
 
-### 13. Version & Help
+### 13. Evaluation Engine (`evo evaluate`)
+
+Run automated AI quality benchmarks (Performance, Cost, Safety, Correctness) against a recorded execution.
+
+```bash
+# Evaluate an execution run by ID
+evo evaluate 92c91ed0
+
+# Evaluate all recorded executions for a commit or active branch
+evo evaluate
+evo evaluate 58e45843
+evo evaluate exp-claude-model
+
+# Compare evaluation quality scores across two commits/branches (with score trend indicators)
+evo evaluate --compare main exp-claude-model
+evo evaluate main exp-claude-model
+
+# List recorded evaluation scores
+evo evaluate list
+
+# Display full JSON report for an evaluation result
+evo evaluate show <eval_id>
+```
+
+---
+
+### 14. Version & Help
 
 ```bash
 # Display CLI version
@@ -265,6 +297,7 @@ evo manifest --help
 evo record --help
 evo execution --help
 evo replay --help
+evo evaluate --help
 ```
 
 ---

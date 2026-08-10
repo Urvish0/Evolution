@@ -4,7 +4,8 @@ const (
 	BranchesDir  = "branches"
 	CommitsDir   = "commits"
 	ObjectsDir   = "objects"
-	ArtifactsDir  = "artifacts"
-	ExecutionsDir = "executions"
-	IndexFile     = "index"
+	ArtifactsDir   = "artifacts"
+	ExecutionsDir  = "executions"
+	EvaluationsDir = "evaluations"
+	IndexFile      = "index"
 )

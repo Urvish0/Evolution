@@ -72,7 +72,7 @@ Everything else is a versioned artifact within that intelligence.
 | `evo record` | Record an AI execution run bound to HEAD commit | ✅ |
 | `evo execution` | List and inspect recorded AI executions | ✅ |
 | `evo replay` | Reconstruct and replay historical AI states | ✅ |
-| `evo evaluate` | Run evaluations | Planned |
+| `evo evaluate` | Run quality evaluations (Performance, Cost, Safety, Correctness) | ✅ |
 
 ---
 
@@ -126,9 +126,9 @@ Evolution/
 
 ## Current Status
 
-> **Phase 5 — Branch & Merge Engine** (complete)
+> **Phase 6 — Replay Engine** (complete)
 
-Rich branch management (`evo branch` listing with metadata, `-m` rename), `evo checkout -b` shortcut, workspace file restoration from Merkle tree snapshots, detached HEAD checkout, file restoration (`evo restore <file>`), Three-Way Merge Engine with Lowest Common Ancestor (LCA) DAG traversal, fast-forward merges, line-by-line 3-way merge with conflict marker injection (`<<<<<<<` / `=======` / `>>>>>>>`), and cross-branch / cross-commit diffing (`evo diff rev1 rev2`). Next milestone: Execution Engine & Deterministic Replay (Phase 6).
+AI execution run recording (`evo record`), execution history listing and inspection (`evo execution list/show`), state reconstruction (`evo replay`), manifest export (`evo replay --export`), execution replay verification (`evo replay --execution`), cross-commit replay comparison (`evo replay commit1 commit2`), and side-by-side execution metrics & output diffing (`evo replay --compare-executions exec1,exec2`). Next milestone: Evaluation Engine (Phase 7).
 
 ---
 

@@ -71,3 +71,31 @@ func TestReplayAndStateReconstruction(t *testing.T) {
 		t.Errorf("expected reconstructed commit ID %s, got %s", commitID, reconstructedState.CommitID)
 	}
 }
+
+func TestCompareExecutions(t *testing.T) {
+	setupTestRepo(t)
+
+	if err := Init(); err != nil {
+		t.Fatalf("Init() failed: %v", err)
+	}
+
+	_ = CreateCommit("Initial commit for execution comparison")
+
+	e1, _ := RecordExecution("Q1", "Answer v1", 200, TokenUsage{PromptTokens: 20, CompletionTokens: 10, TotalTokens: 30}, nil)
+	e2, _ := RecordExecution("Q1", "Answer v2 updated", 350, TokenUsage{PromptTokens: 35, CompletionTokens: 15, TotalTokens: 50}, nil)
+
+	comp, err := CompareExecutions(e1.ID[:8], e2.ID[:8])
+	if err != nil {
+		t.Fatalf("CompareExecutions() failed: %v", err)
+	}
+
+	if comp.PromptTokenDelta != 15 {
+		t.Errorf("expected prompt token delta 15, got %d", comp.PromptTokenDelta)
+	}
+	if comp.CompTokenDelta != 5 {
+		t.Errorf("expected completion token delta 5, got %d", comp.CompTokenDelta)
+	}
+	if comp.DurationDeltaMs != 150 {
+		t.Errorf("expected duration delta 150ms, got %dms", comp.DurationDeltaMs)
+	}
+}

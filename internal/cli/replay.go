@@ -8,19 +8,78 @@ import (
 )
 
 var (
-	replayExportFlag    string
-	replayExecutionFlag string
+	replayExportFlag            string
+	replayExecutionFlag         string
+	replayCompareExecutionsFlag []string
 )
 
 var replayCmd = &cobra.Command{
-	Use:   "replay [commit_id|branch]",
-	Short: "Reconstruct and replay historical AI system state from an Intelligence Commit",
-	Long:  "Reconstructs prompts, model config, retrieval, memory, tools, and policies for any commit, export as manifest, or verify against a recorded execution.",
-	Args:  cobra.MaximumNArgs(1),
+	Use:   "replay [commit1] [commit2]",
+	Short: "Reconstruct, compare, and replay historical AI system states and executions",
+	Long:  "Reconstructs prompts, model config, retrieval, memory, tools, and policies for any commit, compares two executions side-by-side, or exports as manifest.",
+	Args:  cobra.MaximumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		var target string
+		// Case 1: --compare-executions flag with 2 execution IDs
+		if len(replayCompareExecutionsFlag) == 2 {
+			id1, id2 := replayCompareExecutionsFlag[0], replayCompareExecutionsFlag[1]
+			comp, err := repository.CompareExecutions(id1, id2)
+			if err != nil {
+				fmt.Printf("Error comparing executions: %v\n", err)
+				return
+			}
 
-		// Handle --execution flag
+			fmt.Printf("%s=== Execution Side-by-Side Comparison ===%s\n", colorCyan, colorReset)
+			fmt.Printf("Execution 1: %s%s%s (Commit: %s)\n", colorYellow, comp.Exec1.ID[:8], colorReset, comp.Exec1.CommitID[:8])
+			fmt.Printf("Execution 2: %s%s%s (Commit: %s)\n\n", colorYellow, comp.Exec2.ID[:8], colorReset, comp.Exec2.CommitID[:8])
+
+			fmt.Printf("%sMetrics Comparison:%s\n", colorCyan, colorReset)
+			fmt.Printf("  Prompt Tokens:     %d vs %d (%+d)\n", comp.Exec1.Tokens.PromptTokens, comp.Exec2.Tokens.PromptTokens, comp.PromptTokenDelta)
+			fmt.Printf("  Completion Tokens: %d vs %d (%+d)\n", comp.Exec1.Tokens.CompletionTokens, comp.Exec2.Tokens.CompletionTokens, comp.CompTokenDelta)
+			fmt.Printf("  Total Tokens:      %d vs %d (%+d)\n", comp.Exec1.Tokens.TotalTokens, comp.Exec2.Tokens.TotalTokens, comp.TotalTokenDelta)
+			fmt.Printf("  Duration:          %dms vs %dms (%+dms)\n\n", comp.Exec1.DurationMs, comp.Exec2.DurationMs, comp.DurationDeltaMs)
+
+			fmt.Printf("%sOutput Text Differences:%s\n", colorCyan, colorReset)
+			for _, line := range comp.OutputDiffLines {
+				switch line.Op {
+				case repository.DiffInsert:
+					fmt.Printf("%s+%s%s\n", colorGreen, line.Content, colorReset)
+				case repository.DiffDelete:
+					fmt.Printf("%s-%s%s\n", colorRed, line.Content, colorReset)
+				case repository.DiffEqual:
+					fmt.Printf(" %s\n", line.Content)
+				}
+			}
+			return
+		}
+
+		// Case 2: 2 positional arguments provided (evo replay commit1 commit2)
+		if len(args) == 2 {
+			rev1, rev2 := args[0], args[1]
+			s1, s2, changes, err := repository.CompareCommitReplays(rev1, rev2)
+			if err != nil {
+				fmt.Printf("Error comparing commit replays: %v\n", err)
+				return
+			}
+
+			fmt.Printf("%s=== Comparing Reconstructed Intelligence States ===%s\n", colorCyan, colorReset)
+			fmt.Printf("Revision 1: %s%s%s - %s\n", colorYellow, s1.CommitID[:8], colorReset, s1.CommitMsg)
+			fmt.Printf("Revision 2: %s%s%s - %s\n\n", colorYellow, s2.CommitID[:8], colorReset, s2.CommitMsg)
+
+			if len(changes) == 0 {
+				fmt.Println("No artifact changes detected between revisions.")
+				return
+			}
+
+			for _, c := range changes {
+				fmt.Printf("%s[%s]%s %s (%s)\n", colorGreen, c.Category, colorReset, c.ArtifactName, c.Action)
+				if c.Details != "" {
+					fmt.Printf("  Details: %s\n", c.Details)
+				}
+			}
+			return
+		}
+
+		// Case 3: Single execution replay (--execution <id>)
 		if replayExecutionFlag != "" {
 			state, exec, err := repository.ReplayExecution(replayExecutionFlag)
 			if err != nil {
@@ -51,6 +110,8 @@ var replayCmd = &cobra.Command{
 			return
 		}
 
+		// Case 4: Single commit / active branch replay
+		var target string
 		if len(args) == 1 {
 			target = args[0]
 		} else {
@@ -150,5 +211,6 @@ func countArtifactTypes(m repository.Manifest) int {
 func init() {
 	replayCmd.Flags().StringVarP(&replayExportFlag, "export", "e", "", "Export reconstructed state as a manifest file (e.g. evolution.manifest.json)")
 	replayCmd.Flags().StringVar(&replayExecutionFlag, "execution", "", "Replay and compare state against a recorded execution ID")
+	replayCmd.Flags().StringSliceVar(&replayCompareExecutionsFlag, "compare-executions", []string{}, "Compare two execution runs side-by-side by ID (e.g. --compare-executions id1,id2)")
 	rootCmd.AddCommand(replayCmd)
 }
