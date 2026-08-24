@@ -3,19 +3,31 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/Urvish0/evolution/internal/repository"
 	"github.com/spf13/cobra"
 )
 
-var evaluateCompareFlag []string
+var (
+	evaluateCompareFlag       []string
+	evaluateFailUnderFlag     float64
+	evaluateMaxDropFlag       float64
+	evaluateRequireSafetyFlag bool
+)
 
 var evaluateCmd = &cobra.Command{
 	Use:   "evaluate [target1] [target2]",
 	Short: "Run AI quality evaluations or compare evaluation scores across commits",
-	Long:  "Evaluates latency, token cost, safety guardrails, and correctness for executions, commits, or compares two commits side-by-side.",
+	Long:  "Evaluates latency, token cost, safety guardrails, and correctness for executions or commits, enforces quality gates, and blocks regressed builds.",
 	Args:  cobra.MaximumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
+		rule := repository.RegressionRule{
+			MinScore:      evaluateFailUnderFlag,
+			MaxDrop:       evaluateMaxDropFlag,
+			RequireSafety: evaluateRequireSafetyFlag,
+		}
+
 		// Case 1: --compare flag with 2 targets OR 2 positional arguments
 		var target1, target2 string
 		if len(evaluateCompareFlag) == 2 {
@@ -46,10 +58,20 @@ var evaluateCmd = &cobra.Command{
 				m2 := comp.Report2.EvaluatorMeans[name]
 				fmt.Printf("  %-14s %.2f vs %.2f  %s\n", name, m1, m2, formatTrendIndicator(delta))
 			}
+
+			// Perform quality gate regression check
+			if rule.MinScore > 0 || rule.MaxDrop > 0 || rule.RequireSafety {
+				regReport := repository.CheckRegression(comp, rule)
+				printQualityGateReport(regReport)
+				if !regReport.Passed {
+					os.Exit(1)
+				}
+			}
 			return
 		}
 
 		// Case 2: 1 positional argument (execution ID OR commit ID / branch)
+		var report *repository.CommitEvaluationReport
 		if len(args) == 1 {
 			target := args[0]
 
@@ -75,48 +97,34 @@ var evaluateCmd = &cobra.Command{
 						}
 						fmt.Printf("  %-14s %s%.2f%s (%s)\n", name, scoreColor, score.Score, colorReset, score.Details)
 					}
+
+					if rule.MinScore > 0 && res.OverallScore < rule.MinScore {
+						fmt.Printf("\n%s[QUALITY GATE FAILURE]%s Overall score %.2f is below --fail-under %.2f\n", colorRed, colorReset, res.OverallScore, rule.MinScore)
+						os.Exit(1)
+					}
 					return
 				}
 			}
 
 			// Fallback: evaluate commit / branch
-			report, err := repository.EvaluateCommit(target)
+			report, err = repository.EvaluateCommit(target)
 			if err != nil {
 				fmt.Printf("Error evaluating target %s: %v\n", target, err)
 				return
 			}
-
-			fmt.Printf("%s=== Commit Intelligence Quality Report ===%s\n", colorCyan, colorReset)
-			fmt.Printf("Commit ID:     %s%s%s\n", colorYellow, report.CommitID[:8], colorReset)
-			fmt.Printf("Message:       %s\n", report.CommitMsg)
-			fmt.Printf("Executions:    %d runs evaluated\n", report.ExecutionCount)
-			fmt.Printf("Overall Score: %s%.2f / 1.00%s\n\n", colorGreen, report.OverallScore, colorReset)
-
-			fmt.Printf("%sMean Evaluator Scores:%s\n", colorCyan, colorReset)
-			for name, score := range report.EvaluatorMeans {
-				scoreColor := colorGreen
-				if score < 0.7 {
-					scoreColor = colorYellow
-				}
-				if score < 0.5 {
-					scoreColor = colorRed
-				}
-				fmt.Printf("  %-14s %s%.2f%s\n", name, scoreColor, score, colorReset)
+		} else {
+			// Case 3: 0 arguments provided -> evaluate active branch HEAD commit
+			currentBranch, err := repository.GetCurrentBranchName()
+			if err != nil {
+				fmt.Printf("Error getting current branch: %v\n", err)
+				return
 			}
-			return
-		}
 
-		// Case 3: 0 arguments provided -> evaluate active branch HEAD commit
-		currentBranch, err := repository.GetCurrentBranchName()
-		if err != nil {
-			fmt.Printf("Error getting current branch: %v\n", err)
-			return
-		}
-
-		report, err := repository.EvaluateCommit(currentBranch)
-		if err != nil {
-			fmt.Printf("Error evaluating active branch: %v\n", err)
-			return
+			report, err = repository.EvaluateCommit(currentBranch)
+			if err != nil {
+				fmt.Printf("Error evaluating active branch: %v\n", err)
+				return
+			}
 		}
 
 		fmt.Printf("%s=== Commit Intelligence Quality Report ===%s\n", colorCyan, colorReset)
@@ -136,7 +144,27 @@ var evaluateCmd = &cobra.Command{
 			}
 			fmt.Printf("  %-14s %s%.2f%s\n", name, scoreColor, score, colorReset)
 		}
+
+		if rule.MinScore > 0 || rule.RequireSafety {
+			regReport := repository.CheckScoreThreshold(report, rule)
+			printQualityGateReport(regReport)
+			if !regReport.Passed {
+				os.Exit(1)
+			}
+		}
 	},
+}
+
+func printQualityGateReport(report repository.RegressionReport) {
+	fmt.Println()
+	if report.Passed {
+		fmt.Printf("%s[QUALITY GATE PASSED]%s All evaluation rules satisfied.\n", colorGreen, colorReset)
+	} else {
+		fmt.Printf("%s[QUALITY GATE FAILED - REGRESSION DETECTED]%s\n", colorRed, colorReset)
+		for _, v := range report.Violations {
+			fmt.Printf("  %s❌ Violation (%s):%s %s\n", colorRed, v.Evaluator, colorReset, v.Message)
+		}
+	}
 }
 
 func formatTrendIndicator(delta float64) string {
@@ -213,6 +241,10 @@ var evaluateShowCmd = &cobra.Command{
 
 func init() {
 	evaluateCmd.Flags().StringSliceVar(&evaluateCompareFlag, "compare", []string{}, "Compare evaluation scores across two commits/branches (e.g. --compare rev1,rev2)")
+	evaluateCmd.Flags().Float64Var(&evaluateFailUnderFlag, "fail-under", 0.0, "Fail evaluation gate if overall quality score is below threshold (e.g. --fail-under 0.80)")
+	evaluateCmd.Flags().Float64Var(&evaluateMaxDropFlag, "max-drop", 0.0, "Fail evaluation gate if overall score drop exceeds ratio (e.g. --max-drop 0.05)")
+	evaluateCmd.Flags().BoolVar(&evaluateRequireSafetyFlag, "require-safety", false, "Fail evaluation gate if safety score is below 1.0")
+
 	evaluateCmd.AddCommand(evaluateListCmd)
 	evaluateCmd.AddCommand(evaluateShowCmd)
 	rootCmd.AddCommand(evaluateCmd)

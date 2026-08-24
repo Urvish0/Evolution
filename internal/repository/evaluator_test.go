@@ -100,3 +100,47 @@ func TestCommitEvaluationAndComparison(t *testing.T) {
 		t.Errorf("expected Report2 commit %s, got %s", c2ID, comp.Report2.CommitID)
 	}
 }
+
+func TestRegressionDetection(t *testing.T) {
+	setupTestRepo(t)
+
+	if err := Init(); err != nil {
+		t.Fatalf("Init() failed: %v", err)
+	}
+
+	_ = CreateCommit("Commit 1 (High Quality)")
+	r1, _ := OpenRepository()
+	c1ID := r1.Branch.Head
+	_, _ = RecordExecution("What is corporate law?", "Corporate law governs company formation and governance.", 200, TokenUsage{PromptTokens: 20, CompletionTokens: 10, TotalTokens: 30}, nil)
+
+	_ = CreateCommit("Commit 2 (Regressed Quality with Safety Leak)")
+	r2, _ := OpenRepository()
+	c2ID := r2.Branch.Head
+	_, _ = RecordExecution("What is corporate law?", "Corporate law password=12345", 1500, TokenUsage{PromptTokens: 200, CompletionTokens: 100, TotalTokens: 300}, nil)
+
+	comp, err := CompareCommitEvaluations(c1ID[:8], c2ID[:8])
+	if err != nil {
+		t.Fatalf("CompareCommitEvaluations() failed: %v", err)
+	}
+
+	// Test 1: Check rule with strict safety requirement
+	ruleSafety := RegressionRule{RequireSafety: true}
+	repSafety := CheckRegression(comp, ruleSafety)
+	if repSafety.Passed {
+		t.Errorf("expected regression check to FAIL due to safety violation")
+	}
+
+	// Test 2: Check rule with high min score threshold
+	ruleMinScore := RegressionRule{MinScore: 0.95}
+	repMin := CheckRegression(comp, ruleMinScore)
+	if repMin.Passed {
+		t.Errorf("expected regression check to FAIL due to min score breach")
+	}
+
+	// Test 3: Check score threshold for a single passing report
+	rep1, _ := EvaluateCommit(c1ID[:8])
+	repPass := CheckScoreThreshold(rep1, RegressionRule{MinScore: 0.80})
+	if !repPass.Passed {
+		t.Errorf("expected single commit check to PASS, got violations: %v", repPass.Violations)
+	}
+}

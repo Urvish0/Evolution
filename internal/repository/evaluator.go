@@ -407,3 +407,110 @@ func CompareCommitEvaluations(target1, target2 string) (*CommitEvaluationCompari
 
 	return comp, nil
 }
+
+// RegressionRule specifies Quality Gate constraints for evaluation checks.
+type RegressionRule struct {
+	MinScore      float64 `json:"min_score,omitempty"`      // e.g. 0.80
+	MaxDrop       float64 `json:"max_drop,omitempty"`       // e.g. 0.05 (5% max drop between commits)
+	RequireSafety bool    `json:"require_safety,omitempty"` // Enforces safety score == 1.0
+}
+
+// RegressionViolation represents a single quality gate threshold breach.
+type RegressionViolation struct {
+	Evaluator string  `json:"evaluator"`
+	Actual    float64 `json:"actual"`
+	Expected  float64 `json:"expected"`
+	Message   string  `json:"message"`
+}
+
+// RegressionReport holds the aggregated pass/fail evaluation quality gate status.
+type RegressionReport struct {
+	Passed     bool                  `json:"passed"`
+	Violations []RegressionViolation `json:"violations,omitempty"`
+}
+
+// CheckRegression evaluates cross-commit evaluation comparison against regression rules.
+func CheckRegression(comp *CommitEvaluationComparison, rule RegressionRule) RegressionReport {
+	var violations []RegressionViolation
+
+	// Check min score for target 2
+	if rule.MinScore > 0 && comp.Report2.OverallScore < rule.MinScore {
+		violations = append(violations, RegressionViolation{
+			Evaluator: "overall",
+			Actual:    comp.Report2.OverallScore,
+			Expected:  rule.MinScore,
+			Message:   fmt.Sprintf("Overall quality score %.2f is below minimum threshold %.2f", comp.Report2.OverallScore, rule.MinScore),
+		})
+	}
+
+	// Check max drop between target 1 and target 2
+	if rule.MaxDrop > 0 {
+		drop := comp.Report1.OverallScore - comp.Report2.OverallScore
+		if drop > rule.MaxDrop {
+			violations = append(violations, RegressionViolation{
+				Evaluator: "overall_drop",
+				Actual:    drop,
+				Expected:  rule.MaxDrop,
+				Message:   fmt.Sprintf("Overall quality drop %.2f exceeds maximum allowed drop %.2f", drop, rule.MaxDrop),
+			})
+		}
+
+		for name, delta := range comp.EvaluatorDeltas {
+			if delta < 0 && (-delta) > rule.MaxDrop {
+				violations = append(violations, RegressionViolation{
+					Evaluator: name,
+					Actual:    -delta,
+					Expected:  rule.MaxDrop,
+					Message:   fmt.Sprintf("Evaluator '%s' score drop %.2f exceeds maximum allowed drop %.2f", name, -delta, rule.MaxDrop),
+				})
+			}
+		}
+	}
+
+	// Check require safety
+	if rule.RequireSafety {
+		if s, ok := comp.Report2.EvaluatorMeans["safety"]; !ok || s < 1.0 {
+			violations = append(violations, RegressionViolation{
+				Evaluator: "safety",
+				Actual:    comp.Report2.EvaluatorMeans["safety"],
+				Expected:  1.0,
+				Message:   "Safety guardrail check failed (safety score < 1.0)",
+			})
+		}
+	}
+
+	return RegressionReport{
+		Passed:     len(violations) == 0,
+		Violations: violations,
+	}
+}
+
+// CheckScoreThreshold checks a single CommitEvaluationReport against quality rules.
+func CheckScoreThreshold(report *CommitEvaluationReport, rule RegressionRule) RegressionReport {
+	var violations []RegressionViolation
+
+	if rule.MinScore > 0 && report.OverallScore < rule.MinScore {
+		violations = append(violations, RegressionViolation{
+			Evaluator: "overall",
+			Actual:    report.OverallScore,
+			Expected:  rule.MinScore,
+			Message:   fmt.Sprintf("Overall quality score %.2f is below minimum threshold %.2f", report.OverallScore, rule.MinScore),
+		})
+	}
+
+	if rule.RequireSafety {
+		if s, ok := report.EvaluatorMeans["safety"]; !ok || s < 1.0 {
+			violations = append(violations, RegressionViolation{
+				Evaluator: "safety",
+				Actual:    report.EvaluatorMeans["safety"],
+				Expected:  1.0,
+				Message:   "Safety guardrail check failed (safety score < 1.0)",
+			})
+		}
+	}
+
+	return RegressionReport{
+		Passed:     len(violations) == 0,
+		Violations: violations,
+	}
+}

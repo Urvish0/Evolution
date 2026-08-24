@@ -366,6 +366,10 @@ evo evaluate 58e45843
 # Compare evaluation scores across two commits/branches (with score trend indicators)
 evo evaluate --compare main exp-claude-model
 
+# Enforce Quality Gates in CI/CD (exits with exit code 1 on regression/failure)
+evo evaluate --fail-under 0.80
+evo evaluate main exp-claude-model --max-drop 0.05 --require-safety
+
 # List all recorded evaluation results
 evo evaluate list
 

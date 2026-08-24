@@ -274,6 +274,10 @@ evo evaluate exp-claude-model
 evo evaluate --compare main exp-claude-model
 evo evaluate main exp-claude-model
 
+# Enforce Quality Gates in CI/CD (exits with code 1 on quality failure)
+evo evaluate --fail-under 0.80
+evo evaluate main exp-claude-model --max-drop 0.05 --require-safety
+
 # List recorded evaluation scores
 evo evaluate list
 
