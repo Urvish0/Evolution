@@ -5,6 +5,13 @@ Evolution Python SDK — AI-Native Version Control Platform.
 
 from pathlib import Path
 
+from evolution.adapters import (
+    from_anthropic,
+    from_crewai,
+    from_langchain,
+    from_llamaindex,
+    from_openai,
+)
 from evolution.capture import RecordContextManager, record, track
 from evolution.exceptions import (
     ArtifactNotFoundError,
@@ -75,6 +82,11 @@ __all__ = [
     "__version__",
     "artifact_from_dict",
     "compute_blob_hash",
+    "from_anthropic",
+    "from_crewai",
+    "from_langchain",
+    "from_llamaindex",
+    "from_openai",
     "init",
     "open",
     "record",

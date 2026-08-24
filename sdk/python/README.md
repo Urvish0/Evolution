@@ -113,6 +113,30 @@ with evo.record(repo, inputs="What is promissory estoppel?") as rec:
     rec.set_metadata("experiment", "temperature-ab-test")
 ```
 
+### 6. Framework Adapters (LangChain, LlamaIndex, CrewAI, OpenAI, Anthropic)
+
+Convert existing agent and RAG setups directly into version-controlled Intelligence Manifests:
+
+```python
+import evolution as evo
+
+# --- LangChain ---
+manifest = evo.from_langchain(chain, name="legal-chain")
+manifest.save("./my-ai-project")
+
+# --- LlamaIndex ---
+manifest = evo.from_llamaindex(index, name="legal-rag")
+manifest.save("./my-ai-project")
+
+# --- CrewAI ---
+manifest = evo.from_crewai(crew, name="appellate-crew")
+manifest.save("./my-ai-project")
+
+# --- Raw OpenAI / Anthropic Payloads ---
+manifest = evo.from_openai({"model": "gpt-4o", "messages": [...]})
+manifest = evo.from_anthropic({"model": "claude-3.5-sonnet", "system": "..."})
+```
+
 ## License
 
 MIT License. Developed as part of the [Evolution](https://github.com/Urvish0/Evolution) platform.

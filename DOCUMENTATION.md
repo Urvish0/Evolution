@@ -577,4 +577,29 @@ with evo.record(repo, inputs="What is strict liability?") as rec:
     rec.set_tokens(prompt_tokens=30, completion_tokens=45)
 ```
 
+### Framework Adapters
+
+Seamlessly export existing agent frameworks to Intelligence Manifests:
+
+```python
+import evolution as evo
+
+# LangChain
+manifest = evo.from_langchain(chain, name="legal-chain")
+
+# LlamaIndex
+manifest = evo.from_llamaindex(index, name="legal-rag")
+
+# CrewAI
+manifest = evo.from_crewai(crew, name="appellate-crew")
+
+# Raw OpenAI / Anthropic Payloads
+manifest = evo.from_openai({"model": "gpt-4o", "messages": [...]})
+manifest = evo.from_anthropic({"model": "claude-3.5-sonnet", "system": "..."})
+
+# Save manifest to current workspace
+manifest.save(".")
+```
+
+
 
