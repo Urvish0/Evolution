@@ -7,7 +7,7 @@ name = "evolution-sdk"
 version = "0.8.0"
 description = "Python SDK for Evolution — AI-Native Version Control Platform"
 readme = "README.md"
-authors = [{ name = "Urvish", email = "urvish@example.com" }]
+authors = [{ name = "Urvish.A.Prajapati", email = "prajapatiurvish712@gmail.com" }]
 license = { text = "MIT" }
 requires-python = ">=3.10"
 keywords = ["ai", "version-control", "llm", "manifest", "evaluation", "langchain", "llamaindex"]

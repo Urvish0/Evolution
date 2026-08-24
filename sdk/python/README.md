@@ -79,6 +79,40 @@ commit = repo.commit(
 print(f"Committed: {commit.id[:8]} - {commit.message}")
 ```
 
+### 4. Automatic Intelligence Capture with `@evolution.track`
+
+Decorate any LLM or agent function to automatically capture system prompts from docstrings, model configurations, and execution telemetry:
+
+```python
+import evolution as evo
+
+@evo.track(model="gpt-4o", temperature=0.2)
+def run_legal_agent(query: str):
+    """Specialized AI assistant for analyzing corporate legal liability."""
+    # Your LLM call (OpenAI, Anthropic, or custom)
+    return client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": query}]
+    )
+
+# Calling the function automatically records inputs, outputs, latency, tokens,
+# and attaches prompt/model config to evolution.manifest.json!
+response = run_legal_agent("Review this indemnity clause...")
+```
+
+### 5. Precision Execution Tracing with Context Manager
+
+```python
+import evolution as evo
+
+repo = evo.open("./my-ai-project")
+
+with evo.record(repo, inputs="What is promissory estoppel?") as rec:
+    response = client.chat.completions.create(...)
+    rec.set_output(response)
+    rec.set_metadata("experiment", "temperature-ab-test")
+```
+
 ## License
 
 MIT License. Developed as part of the [Evolution](https://github.com/Urvish0/Evolution) platform.

@@ -5,6 +5,7 @@ Evolution Python SDK — AI-Native Version Control Platform.
 
 from pathlib import Path
 
+from evolution.capture import RecordContextManager, record, track
 from evolution.exceptions import (
     ArtifactNotFoundError,
     CommandExecutionError,
@@ -63,6 +64,7 @@ __all__ = [
     "ModelConfigArtifact",
     "PolicyArtifact",
     "PromptArtifact",
+    "RecordContextManager",
     "RepoStatus",
     "Repository",
     "RepositoryAlreadyExistsError",
@@ -75,4 +77,6 @@ __all__ = [
     "compute_blob_hash",
     "init",
     "open",
+    "record",
+    "track",
 ]

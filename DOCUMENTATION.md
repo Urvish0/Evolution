@@ -547,3 +547,34 @@ exec_record = repo.record_execution(
 )
 ```
 
+### Automatic Telemetry with `@evolution.track`
+
+```python
+import evolution as evo
+
+repo = evo.open("./my-ai-agent")
+
+@evo.track(repo=repo, model="gpt-4o", temperature=0.2)
+def legal_reasoning_agent(query: str):
+    """Answers legal queries with statutory citations."""
+    # Your LLM call — outputs and token metrics are auto-captured!
+    return {
+        "choices": [{"message": {"content": "Under Section 42 of the Companies Act..."}}],
+        "usage": {"prompt_tokens": 50, "completion_tokens": 75}
+    }
+```
+
+### Tracing with Context Manager
+
+```python
+import evolution as evo
+
+repo = evo.open("./my-ai-agent")
+
+with evo.record(repo, inputs="What is strict liability?") as rec:
+    response = call_llm(query)
+    rec.set_output(response)
+    rec.set_tokens(prompt_tokens=30, completion_tokens=45)
+```
+
+
