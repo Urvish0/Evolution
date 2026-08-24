@@ -1,8 +1,8 @@
 # Evolution Platform — Official Documentation & Technical Reference
 
-> **Version:** v0.3.0 / v0.4.0 (In Progress)  
+> **Version:** v0.7.0  
 > **Core Mission:** *"Version Intelligence, Not Code."*  
-> **Specification:** Intelligence Manifest Specification v0.1  
+> **Specification:** Intelligence Manifest Specification v1.0  
 
 ---
 
@@ -15,7 +15,7 @@
    - [2.3 Staging Area (Index)](#23-staging-area-index)
    - [2.4 Working Tree Comparison & Content Diffs](#24-working-tree-comparison--content-diffs)
    - [2.5 Artifact Model](#25-artifact-model)
-   - [2.6 Intelligence Manifest Specification v0.1](#26-intelligence-manifest-specification-v01)
+   - [2.6 Intelligence Manifest Specification v1.0](#26-intelligence-manifest-specification-v10)
 3. [CLI Reference Manual](#3-cli-reference-manual)
    - [`evo init`](#evo-init)
    - [`evo status`](#evo-status)
@@ -77,7 +77,7 @@ Evolution compares current workspace files against the HEAD committed tree snaps
 - **Content Diffs:** `evo diff` uses the **Longest Common Subsequence (LCS)** algorithm to render line-by-line `+` (added) and `-` (deleted) unified diffs between committed blobs and current disk files.
 
 ### 2.5 Artifact Model
-Evolution implements a typed artifact model (`Artifact` interface in Go). Every AI component belongs to one of 6 core types matching the Intelligence Manifest Spec v0.1:
+Evolution implements a typed artifact model (`Artifact` interface in Go). Every AI component belongs to one of 6 core types matching the Intelligence Manifest Spec v1.0:
 1. `prompt` — System prompts, templates, few-shot examples
 2. `memory` — Buffer window, summary, vector, or graph memory strategies
 3. `retrieval` — Vector store settings, chunk sizes, top-k retrieval rules
@@ -85,11 +85,14 @@ Evolution implements a typed artifact model (`Artifact` interface in Go). Every 
 5. `model_config` — LLM model provider, temperature, max output tokens, top-p
 6. `policy` — Safety rules and output enforcement levels
 
-### 2.6 Intelligence Manifest Specification v0.1
+### 2.6 Intelligence Manifest Specification v1.0
 The open standard defining how AI system state is declared in `evolution.manifest.json`.
 - Required fields: `version`, `name`
 - Contains arrays of typed artifacts and environment metadata.
+- Includes execution recording schema with inputs, outputs, tokens, and duration.
+- Includes evaluation scoring schema with pluggable evaluators and regression rules.
 - Automatically detected, validated, and attached to commits when running `evo commit`.
+- Full specification: `spec/intelligence-manifest-v1.0.md`
 
 ---
 
@@ -281,13 +284,13 @@ evo merge exp-claude-v2
 ---
 
 ### `evo manifest`
-Manages the `evolution.manifest.json` file conforming to Spec v0.1.
+Manages the `evolution.manifest.json` file conforming to Spec v1.0.
 
 ```bash
 # Generate starter manifest file
 evo manifest init --name "legal-agent" --description "Legal Research Assistant"
 
-# Validate manifest schema against Spec v0.1
+# Validate manifest schema against Spec v1.0
 evo manifest validate
 
 # Display current workspace manifest JSON

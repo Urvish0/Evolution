@@ -119,16 +119,16 @@ Evolution/
 | [Architecture Principles](docs/ARCHITECTURE_PRINCIPLES.md) | Design constraints |
 | [CLI Spec](docs/CLI_SPEC.md) | Command definitions |
 | [ADRs](docs/adr/) | Architecture Decision Records |
-| [Intelligence Manifest Spec v0.2](spec/intelligence-manifest-v0.2.md) | Open standard for describing AI system state (validated) |
-| [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation |
+| [Intelligence Manifest Spec v1.0](spec/intelligence-manifest-v1.0.md) | Open standard for describing AI system state (stable) |
+| [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation (v1.0) |
 
 ---
 
 ## Current Status
 
-> **Phase 6 — Replay Engine** (complete)
+> **Phase 7 — Evaluation Engine & Spec v1.0** (complete)
 
-AI execution run recording (`evo record`), execution history listing and inspection (`evo execution list/show`), state reconstruction (`evo replay`), manifest export (`evo replay --export`), execution replay verification (`evo replay --execution`), cross-commit replay comparison (`evo replay commit1 commit2`), and side-by-side execution metrics & output diffing (`evo replay --compare-executions exec1,exec2`). Next milestone: Evaluation Engine (Phase 7).
+AI evaluation framework with pluggable evaluators (performance, cost, safety, correctness), cross-commit evaluation comparison, regression detection with CI/CD quality gates (`--fail-under`, `--max-drop`, `--require-safety`), and Intelligence Manifest Specification v1.0 (Stable) with execution and evaluation schemas. Ready for v0.7.0 tag.
 
 ---
 

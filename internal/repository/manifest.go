@@ -9,9 +9,10 @@ import (
 const (
 	ManifestFileName = "evolution.manifest.json"
 	SpecVersionV01   = "0.1.0"
+	SpecVersionV10   = "1.0.0"
 )
 
-// ManifestArtifacts holds arrays of typed artifacts matching the Spec v0.1 schema.
+// ManifestArtifacts holds arrays of typed artifacts matching the Spec v1.0 schema.
 type ManifestArtifacts struct {
 	Prompts     []PromptArtifact     `json:"prompts,omitempty"`
 	Memory      []MemoryArtifact     `json:"memory,omitempty"`
@@ -30,7 +31,7 @@ type Manifest struct {
 	Metadata    map[string]any    `json:"metadata,omitempty"`
 }
 
-// NewDefaultManifest initializes a starter Manifest struct conforming to Spec v0.1.
+// NewDefaultManifest initializes a starter Manifest struct conforming to Spec v1.0.
 func NewDefaultManifest(name, description string) Manifest {
 	if name == "" {
 		name = "ai-intelligence"
@@ -40,7 +41,7 @@ func NewDefaultManifest(name, description string) Manifest {
 	}
 
 	return Manifest{
-		Version:     SpecVersionV01,
+		Version:     SpecVersionV10,
 		Name:        name,
 		Description: description,
 		Artifacts: ManifestArtifacts{

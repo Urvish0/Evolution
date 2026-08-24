@@ -26,8 +26,8 @@ func TestManifestLifecycle(t *testing.T) {
 	if m.Name != "test-ai" {
 		t.Errorf("expected name 'test-ai', got %q", m.Name)
 	}
-	if m.Version != SpecVersionV01 {
-		t.Errorf("expected version %q, got %q", SpecVersionV01, m.Version)
+	if m.Version != SpecVersionV10 {
+		t.Errorf("expected version %q, got %q", SpecVersionV10, m.Version)
 	}
 
 	// 3. Validate Manifest

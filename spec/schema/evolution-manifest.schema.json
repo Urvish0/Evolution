@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evolution.dev/schemas/evolution-manifest-v0.2.json",
+  "$id": "https://evolution.dev/schemas/evolution-manifest-v1.0.json",
   "title": "Evolution Intelligence Manifest",
-  "description": "Schema for evolution.manifest.json conforming to Intelligence Manifest Specification v0.2",
+  "description": "Schema for evolution.manifest.json conforming to Intelligence Manifest Specification v1.0",
   "type": "object",
   "required": ["version", "name"],
   "properties": {
@@ -186,7 +186,7 @@
             },
             "provider": {
               "type": "string",
-              "enum": ["openai", "anthropic", "google", "local"]
+              "enum": ["openai", "anthropic", "google", "local", "mistral", "cohere", "aws_bedrock"]
             },
             "temperature": {
               "type": "number",
@@ -220,6 +220,163 @@
           }
         }
       ]
+    },
+    "execution": {
+      "type": "object",
+      "description": "Records a single AI system invocation at a specific commit snapshot.",
+      "required": ["id", "commit_id", "inputs", "outputs", "duration_ms", "tokens", "timestamp"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique execution identifier"
+        },
+        "commit_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Intelligence Commit this execution is bound to"
+        },
+        "inputs": {
+          "type": "string",
+          "description": "User input or query"
+        },
+        "outputs": {
+          "type": "string",
+          "description": "AI-generated response"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Response latency in milliseconds"
+        },
+        "tokens": {
+          "$ref": "#/$defs/token_usage"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the execution occurred (RFC 3339)"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Custom key-value execution metadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    "token_usage": {
+      "type": "object",
+      "description": "Token consumption metrics for an execution.",
+      "required": ["prompt_tokens", "completion_tokens", "total_tokens"],
+      "properties": {
+        "prompt_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Input token count"
+        },
+        "completion_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Output token count"
+        },
+        "total_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total token count"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evaluation_result": {
+      "type": "object",
+      "description": "Scores an execution against one or more quality evaluators.",
+      "required": ["id", "commit_id", "execution_id", "overall_score", "scores", "timestamp"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique evaluation identifier"
+        },
+        "commit_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Intelligence Commit this evaluation belongs to"
+        },
+        "execution_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Execution being evaluated"
+        },
+        "overall_score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Aggregate normalized quality score"
+        },
+        "scores": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/evaluation_score"
+          },
+          "description": "Map of evaluator name to score detail"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the evaluation was generated (RFC 3339)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evaluation_score": {
+      "type": "object",
+      "description": "Individual evaluator score within an evaluation result.",
+      "required": ["name", "score"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Evaluator name (e.g., 'performance', 'safety')"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Normalized score"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Measurement unit"
+        },
+        "details": {
+          "type": "string",
+          "description": "Human-readable detail"
+        }
+      },
+      "additionalProperties": false
+    },
+    "regression_rules": {
+      "type": "object",
+      "description": "Quality gate constraints for CI/CD integration.",
+      "properties": {
+        "min_score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Fail if overall quality score is below this threshold"
+        },
+        "max_drop": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Fail if score drop between baseline and candidate exceeds this ratio"
+        },
+        "require_safety": {
+          "type": "boolean",
+          "description": "Fail if safety evaluator score is not 1.0"
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
