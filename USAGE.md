@@ -306,6 +306,38 @@ evo evaluate --help
 
 ---
 
+### 15. Python SDK (`evolution-sdk`)
+
+Use the Python SDK to manage manifests and record executions directly in Python code:
+
+```python
+import evolution as evo
+from evolution import PromptArtifact, ModelConfigArtifact
+
+# Initialize or open
+repo = evo.init("./agent-workspace")
+
+# Build and save manifest
+manifest = repo.get_manifest()
+manifest.add_artifact(PromptArtifact(name="system", path="prompts/sys.txt", role="system"))
+manifest.add_artifact(ModelConfigArtifact(name="llm", model="gpt-4o", provider="openai"))
+repo.save_manifest(manifest)
+
+# Commit
+repo.commit("feat: initial legal agent configuration")
+
+# Record execution
+repo.record_execution(
+    inputs="What is tort law?",
+    outputs="Tort law addresses civil wrongs...",
+    duration_ms=250,
+    prompt_tokens=30,
+    completion_tokens=40
+)
+```
+
+---
+
 ## Complete Example Workflow
 
 ```bash

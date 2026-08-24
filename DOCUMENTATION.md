@@ -33,6 +33,7 @@
    - [Use Case 2: Parallel Branching for Model Configuration Experiments](#use-case-2-parallel-branching-for-model-configuration-experiments)
    - [Use Case 3: Line-by-Line Content Diffing on System Prompts](#use-case-3-line-by-line-content-diffing-on-system-prompts)
 5. [Repository On-Disk Layout](#5-repository-on-disk-layout)
+6. [Python SDK Reference (`evolution-sdk`)](#6-python-sdk-reference-evolution-sdk)
 
 ---
 
@@ -474,11 +475,75 @@ Evolution repositories maintain a clean, local-first storage layout under `.evol
 │   │   └── 71051cad...   # Blob object (file content)
 │   └── aa/
 │       └── 0237644a...   # Tree object (directory structure)
-└── artifacts/            # Typed Artifact JSON objects
-    ├── prompt/
-    ├── model_config/
-    ├── retrieval/
-    ├── tool/
-    ├── memory/
-    └── policy/
+├── artifacts/            # Typed Artifact JSON objects
+│   ├── prompt/
+│   ├── model_config/
+│   ├── retrieval/
+│   ├── tool/
+│   ├── memory/
+│   └── policy/
+├── executions/           # Execution run JSON records
+└── evaluations/          # Evaluation report JSON records
 ```
+
+---
+
+## 6. Python SDK Reference (`evolution-sdk`)
+
+The Python SDK (`evolution-sdk`) provides programmatic access to Evolution repositories, intelligence manifests, and execution tracking from Python applications and AI pipelines.
+
+### Installation
+
+```bash
+pip install evolution-sdk
+```
+
+### Basic Usage
+
+```python
+import evolution as evo
+from evolution import (
+    Manifest,
+    PromptArtifact,
+    ModelConfigArtifact,
+    ToolArtifact,
+)
+
+# 1. Initialize or Open Repository
+repo = evo.init("./my-ai-agent", name="legal-assistant")
+
+# 2. Build Intelligence Manifest
+manifest = repo.get_manifest()
+
+manifest.add_artifact(PromptArtifact(
+    name="system-prompt",
+    path="prompts/system.txt",
+    role="system"
+))
+
+manifest.add_artifact(ModelConfigArtifact(
+    name="primary-llm",
+    model="gpt-4o",
+    provider="openai",
+    temperature=0.2
+))
+
+# Save and auto-hash artifacts
+repo.save_manifest(manifest)
+
+# 3. Commit Intelligence State
+commit = repo.commit(
+    message="feat: configure legal analysis prompt and model",
+    tags=["v1.0-alpha"]
+)
+
+# 4. Record Execution
+exec_record = repo.record_execution(
+    inputs="Explain promissory estoppel",
+    outputs="Promissory estoppel prevents a party from going back on a promise...",
+    duration_ms=210,
+    prompt_tokens=45,
+    completion_tokens=60
+)
+```
+

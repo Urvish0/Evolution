@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evolution-sdk"
+version = "0.8.0"
+description = "Python SDK for Evolution — AI-Native Version Control Platform"
+readme = "README.md"
+authors = [{ name = "Urvish", email = "urvish@example.com" }]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+keywords = ["ai", "version-control", "llm", "manifest", "evaluation", "langchain", "llamaindex"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Version Control",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Urvish0/Evolution"
+Repository = "https://github.com/Urvish0/Evolution"
+Specification = "https://github.com/Urvish0/Evolution/blob/main/spec/intelligence-manifest-v1.0.md"
