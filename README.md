@@ -122,6 +122,7 @@ Evolution/
 | [Intelligence Manifest Spec v1.0](spec/intelligence-manifest-v1.0.md) | Open standard for describing AI system state (stable) |
 | [Framework Integration Spec v1.0](spec/framework-integration-v1.0.md) | Open protocol for framework adapters (LangChain, LlamaIndex, CrewAI) |
 | [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation (v1.0) |
+| [Verification & Proof-of-Work Report](docs/EVOLUTION_VERIFICATION_REPORT.md) | Complete technical proof, CLI outputs, and live Groq multi-agent benchmarks |
 
 ---
 

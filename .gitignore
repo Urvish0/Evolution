@@ -1,5 +1,12 @@
 # Evolution local repository
 .evolution/
+examples/**/agent_workspace/
+playground/.venv/
+playground/workspace/
+.env
+*.env
+
+
 
 *.docx
 # Go build artifacts
