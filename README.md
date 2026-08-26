@@ -1,90 +1,129 @@
 # Evolution
 
-> Version intelligence, not code.
+> **Version Intelligence, Not Code.**
 
 [![CI](https://github.com/Urvish0/Evolution/actions/workflows/ci.yml/badge.svg)](https://github.com/Urvish0/Evolution/actions/workflows/ci.yml)
 
-Evolution is an AI engineering platform that introduces version control for intelligence.
+Evolution is an **AI-native version control platform**. Where Git versions source code, Evolution versions the complete operational state of an AI system — prompts, model configurations, memory, retrieval settings, tool definitions, and output policies — as a single immutable **Intelligence Commit**.
 
-Instead of versioning only source code, Evolution versions the entire lifecycle of an AI system — prompts, memory, retrieval, tool usage, evaluations, policies, and deployments.
+Built with a Go core engine and a Python SDK with **zero runtime dependencies**.
 
 ---
 
-## Quick Start
+## The Problem
+
+AI systems are not just code. Their behavior is determined by a combination of dynamic components — prompts, memory, retrieval configs, tools, model parameters, and guardrails — that evolve independently and break unpredictably.
+
+Teams struggle to:
+
+- **Track** which prompt version is running in production
+- **Debug** why an agent's output quality dropped after a change
+- **Reproduce** a previous AI behavior for auditing or compliance
+- **Compare** two agent configurations side-by-side with real metrics
+- **Deploy** AI updates with confidence that quality hasn't regressed
+
+Git can't solve this because Git doesn't know what a prompt is. Evolution does.
+
+---
+
+## How It Works
+
+```python
+# pip install evolution-sdk
+import evolution as evo
+
+repo = evo.Repository.init("./my-ai-project")
+
+@evo.track(repo=repo, model="gpt-4o", temperature=0.3)
+def my_agent(question: str):
+    """You are a helpful research assistant. Always cite your sources."""
+    return openai.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": question}],
+    )
+
+# Run your agent — Evolution automatically captures:
+# ✅ System prompt (from docstring)
+# ✅ Model config (gpt-4o, temp=0.3)
+# ✅ Input/output text
+# ✅ Token usage & latency
+# ✅ Execution telemetry record
+result = my_agent("What is quantum computing?")
+
+# Commit the intelligence snapshot
+repo.commit("feat: initial research assistant configuration")
+```
+
+Then from the CLI:
 
 ```bash
-git clone https://github.com/Urvish0/Evolution.git
-cd Evolution
-
-go run ./cmd/evo version
-go run ./cmd/evo init
-go run ./cmd/evo status
-go run ./cmd/evo commit -m "initial intelligence"
-go run ./cmd/evo log
+evo log --oneline          # View intelligence history
+evo diff main experiment   # See what changed (prompt, model, temperature)
+evo replay <commit-id>     # Reconstruct a historical AI state
+evo evaluate --compare main experiment   # Compare quality, cost, safety
 ```
 
 ---
 
-## Problem
+## Key Features
 
-AI systems are driven by dynamic components — prompts, memory, retrieval, models, tools, and policies — that evolve independently and influence behavior unpredictably.
+### Go Core Engine
 
-Teams struggle to:
+| Command | What It Does |
+|---------|--------------|
+| `evo init` | Initialize an Evolution repository |
+| `evo commit` | Create an immutable Intelligence Commit (Merkle tree snapshot) |
+| `evo log` | View commit history with DAG traversal |
+| `evo diff` | Line-by-line content diff (LCS algorithm) + semantic artifact diff |
+| `evo branch` / `evo checkout` | Parallel intelligence experimentation |
+| `evo merge` | Three-way merge with LCA ancestor detection |
+| `evo manifest` | Manage `evolution.manifest.json` (init, validate, show) |
+| `evo artifact` | Typed AI artifacts: prompt, memory, retrieval, tools, model_config, policies |
+| `evo replay` | Reconstruct historical AI states from any commit |
+| `evo evaluate` | Pluggable quality evaluations with regression detection & CI gates |
 
-- Understand why an agent behaves differently
-- Identify which change introduced a regression
-- Reproduce previous AI behavior
-- Compare intelligence across versions
-- Deploy AI updates with confidence
+### Python SDK (`evolution-sdk`)
 
-Evolution exists to reduce that uncertainty.
+| Feature | Description |
+|---------|-------------|
+| `@evo.track` | Decorator that auto-captures prompts, model config, and execution telemetry |
+| `evo.record()` | Context manager for precision latency measurement |
+| Framework Adapters | LangChain, LlamaIndex, CrewAI, OpenAI, Anthropic |
+| Zero Dependencies | Pure Python, no external runtime requirements |
+| Typed Artifacts | 6 artifact types with Git-compatible SHA-256 auto-hashing |
 
----
+### Intelligence Manifest Specification (v1.0 Stable)
 
-## Core Philosophy
-
-Evolution does **not** version prompts, memories, or workflows individually.
-
-Evolution versions **Intelligence** — the complete operational state of an AI system at a point in time.
-
-Everything else is a versioned artifact within that intelligence.
-
----
-
-## Features
-
-| Feature | Description | Status |
-|---------|-------------|--------|
-| `evo init` | Initialize an Evolution repository | ✅ |
-| `evo status` | Show repository status and branch | ✅ |
-| `evo add` | Stage files or directories for commit | ✅ |
-| `evo commit` | Create an Intelligence Commit | ✅ |
-| `evo log` | View commit history (with `--oneline`, `-n`, colors) | ✅ |
-| `evo config` | Manage user identity (`user.name`, `user.email`) | ✅ |
-| `evo branch` | List, create (`-n`), and delete (`-d`) branches | ✅ |
-| `evo checkout` | Switch active branch | ✅ |
-| `evo version` | Display CLI version | ✅ |
-| `evo diff` | Compare working tree against HEAD | ✅ |
-| `evo manifest` | Manage `evolution.manifest.json` (`init`, `validate`, `show`) | ✅ |
-| `evo artifact` | Manage AI artifacts (`add`, `list`, `show`, `diff`) | ✅ |
-| `evo restore` | Restore files or working tree from HEAD commit | ✅ |
-| `evo merge` | Three-way branch merging with conflict marker injection | ✅ |
-| `evo record` | Record an AI execution run bound to HEAD commit | ✅ |
-| `evo execution` | List and inspect recorded AI executions | ✅ |
-| `evo replay` | Reconstruct and replay historical AI states | ✅ |
-| `evo evaluate` | Run quality evaluations (Performance, Cost, Safety, Correctness) | ✅ |
+An **open, framework-agnostic standard** for describing the complete state of any AI system. Like OpenAPI standardized REST APIs, the Intelligence Manifest standardizes AI system configuration.
 
 ---
 
 ## Architecture
 
 ```
-Developer → CLI / SDK → Core Engine → Evolution Repository → Replay & Evaluation
+┌─────────────────────────────────────────────────────────────────┐
+│  DEVELOPER INTERFACE                                             │
+│  ├── CLI: evo init, commit, diff, merge, replay, evaluate       │
+│  └── Python SDK: @evo.track, evo.record(), Repository           │
+│                                                                  │
+│  FRAMEWORK ADAPTERS                                              │
+│  ├── LangChain, LlamaIndex, CrewAI                              │
+│  └── Direct OpenAI & Anthropic                                   │
+│                                                                  │
+│  OPEN SPECIFICATIONS                                             │
+│  ├── Intelligence Manifest Spec v1.0                             │
+│  └── Framework Integration Spec v1.0                             │
+│                                                                  │
+│  CORE ENGINE (Go)                                                │
+│  ├── Content-Addressable Storage (SHA-256 Blobs & Merkle Trees) │
+│  ├── DAG Commit Engine (3-Way Merge with LCA)                   │
+│  ├── Content Diff Engine (LCS Line-Level Diffs)                 │
+│  ├── Replay Engine (State Reconstruction)                        │
+│  └── Evaluation Engine (Pluggable Evaluators & CI Quality Gates)│
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-**Tech Stack:** Go, Cobra CLI, JSON serialization, local filesystem storage.
-
-See [EVOLUTION_MASTER_PLAN.md](EVOLUTION_MASTER_PLAN.md) for the complete roadmap, architecture, and phase details.
+**Tech Stack:** Go 1.26 (core engine, CLI), Python ≥3.10 (SDK, zero dependencies), JSON serialization, local-first filesystem storage.
 
 ---
 
@@ -92,17 +131,18 @@ See [EVOLUTION_MASTER_PLAN.md](EVOLUTION_MASTER_PLAN.md) for the complete roadma
 
 ```
 Evolution/
-├── cmd/evo/             # CLI entry point
+├── cmd/evo/                 # Go CLI entry point
 ├── internal/
-│   ├── cli/             # Cobra command handlers
-│   ├── repository/      # Core versioning engine
-│   └── version/         # Version metadata
-├── spec/                # Intelligence Manifest Specification
-├── docs/                # Design documentation
-├── .agents/             # AI collaboration rules
-├── DOCUMENTATION.md     # Official Technical Manual & Technical Reference
-├── USAGE.md             # Complete CLI usage guide
-└── EVOLUTION_MASTER_PLAN.md  # Single source of truth
+│   ├── cli/                 # Cobra command handlers
+│   ├── repository/          # Core versioning engine (44 files, 53 tests)
+│   └── version/             # Version metadata
+├── sdk/python/              # Python SDK (pip install evolution-sdk)
+│   ├── evolution/           # SDK source (8 modules)
+│   └── tests/               # 22 unit tests
+├── spec/                    # Intelligence Manifest Specification v1.0
+├── playground/              # Live multi-agent testing lab (Groq LPU)
+├── examples/                # Quickstart examples for new users
+└── docs/                    # Design documentation & verification reports
 ```
 
 ---
@@ -111,29 +151,43 @@ Evolution/
 
 | Document | Purpose |
 |----------|---------|
-| [Official Manual](DOCUMENTATION.md) | Complete technical manual, architecture, CLI reference, and end-to-end tutorials |
-| [CLI Usage Guide](USAGE.md) | Quick reference for CLI commands and workflows |
-| [Master Plan](EVOLUTION_MASTER_PLAN.md) | Roadmap, progress, architecture — single source of truth |
-| [PRD](docs/PRD.md) | Product requirements and vision |
-| [Domain Model](docs/DOMAIN_MODEL.md) | Core entities and relationships |
-| [Architecture Principles](docs/ARCHITECTURE_PRINCIPLES.md) | Design constraints |
-| [CLI Spec](docs/CLI_SPEC.md) | Command definitions |
-| [ADRs](docs/adr/) | Architecture Decision Records |
-| [Intelligence Manifest Spec v1.0](spec/intelligence-manifest-v1.0.md) | Open standard for describing AI system state (stable) |
-| [Framework Integration Spec v1.0](spec/framework-integration-v1.0.md) | Open protocol for framework adapters (LangChain, LlamaIndex, CrewAI) |
-| [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation (v1.0) |
-| [Verification & Proof-of-Work Report](docs/EVOLUTION_VERIFICATION_REPORT.md) | Complete technical proof, CLI outputs, and live Groq multi-agent benchmarks |
+| [CLI Usage Guide](USAGE.md) | Complete CLI command reference |
+| [Official Manual](DOCUMENTATION.md) | Technical manual, architecture, and tutorials |
+| [Intelligence Manifest Spec v1.0](spec/intelligence-manifest-v1.0.md) | Open standard for AI system state (stable) |
+| [Framework Integration Spec v1.0](spec/framework-integration-v1.0.md) | Adapter protocol for LangChain, LlamaIndex, CrewAI |
+| [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation |
+| [Verification Report](docs/EVOLUTION_VERIFICATION_REPORT.md) | Complete technical proof with live Groq benchmarks |
+
+---
+
+## Why Not Just Use Git?
+
+| Aspect | Git | Evolution |
+|--------|-----|-----------|
+| **What it versions** | Text files (source code) | AI system state (prompts + memory + models + tools + policies) |
+| **How content arrives** | Developer writes files manually | SDK **automatically** captures runtime state |
+| **What a diff shows** | Line-by-line text changes | Semantic changes: "model switched from GPT-4 to Claude" |
+| **What replay means** | Checkout restores files to disk | Replay **re-executes** the AI with exact historical state |
+| **Evaluation** | Not applicable | Built-in quality comparison: accuracy, latency, cost, safety |
 
 ---
 
 ## Current Status
 
-> **Phase 8 — Python SDK & Framework Integrations** (complete)
+> **Phase 8 complete — Core Engine + Python SDK + Specs v1.0**
 
-Full-featured Python SDK (`evolution-sdk` on Python 3.10+ with zero external runtime dependencies), automatic intelligence capture with `@evolution.track` and context managers, framework adapters for LangChain, LlamaIndex, CrewAI, and direct OpenAI/Anthropic calls, and Framework Integration Specification v1.0 (Stable). Ready for v0.8.0 tag.
+- ✅ Go core engine with content-addressable storage, Merkle trees, 3-way merge, replay, and evaluation
+- ✅ Python SDK with `@track` decorator, framework adapters, and zero dependencies
+- ✅ Intelligence Manifest Specification v1.0 (stable)
+- ✅ Framework Integration Specification v1.0 (stable)
+- ✅ 75 automated tests passing (53 Go + 22 Python)
+- ✅ Live multi-agent testing with Groq LPU models
+- 🔜 PyPI publication (`pip install evolution-sdk`)
+- 🔜 LLM-as-judge semantic evaluation
+- 🔜 REST API server for remote collaboration
 
 ---
 
 ## License
 
-Apache-2.0
+MIT
