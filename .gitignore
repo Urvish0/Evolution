@@ -1,6 +1,7 @@
 # Evolution local repository
 .evolution/
 
+*.docx
 # Go build artifacts
 *.exe
 *.exe~

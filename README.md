@@ -120,15 +120,16 @@ Evolution/
 | [CLI Spec](docs/CLI_SPEC.md) | Command definitions |
 | [ADRs](docs/adr/) | Architecture Decision Records |
 | [Intelligence Manifest Spec v1.0](spec/intelligence-manifest-v1.0.md) | Open standard for describing AI system state (stable) |
+| [Framework Integration Spec v1.0](spec/framework-integration-v1.0.md) | Open protocol for framework adapters (LangChain, LlamaIndex, CrewAI) |
 | [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation (v1.0) |
 
 ---
 
 ## Current Status
 
-> **Phase 7 — Evaluation Engine & Spec v1.0** (complete)
+> **Phase 8 — Python SDK & Framework Integrations** (complete)
 
-AI evaluation framework with pluggable evaluators (performance, cost, safety, correctness), cross-commit evaluation comparison, regression detection with CI/CD quality gates (`--fail-under`, `--max-drop`, `--require-safety`), and Intelligence Manifest Specification v1.0 (Stable) with execution and evaluation schemas. Ready for v0.7.0 tag.
+Full-featured Python SDK (`evolution-sdk` on Python 3.10+ with zero external runtime dependencies), automatic intelligence capture with `@evolution.track` and context managers, framework adapters for LangChain, LlamaIndex, CrewAI, and direct OpenAI/Anthropic calls, and Framework Integration Specification v1.0 (Stable). Ready for v0.8.0 tag.
 
 ---
 

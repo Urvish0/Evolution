@@ -23,11 +23,12 @@ That's it. Only `version` and `name` are required. Everything else is optional a
 
 ## Specification Documents
 
-| Version | Status | Document |
-|---------|--------|----------|
-| **1.0.0** | **Stable** | [intelligence-manifest-v1.0.md](intelligence-manifest-v1.0.md) |
-| 0.2.0 | Superseded | [intelligence-manifest-v0.2.md](intelligence-manifest-v0.2.md) |
-| 0.1.0 | Superseded | [intelligence-manifest-v0.1.md](intelligence-manifest-v0.1.md) |
+| Specification | Version | Status | Document |
+|---------------|---------|--------|----------|
+| **Intelligence Manifest Specification** | **1.0.0** | **Stable** | [intelligence-manifest-v1.0.md](intelligence-manifest-v1.0.md) |
+| **Framework Integration Specification** | **1.0.0** | **Stable** | [framework-integration-v1.0.md](framework-integration-v1.0.md) |
+| Intelligence Manifest Specification | 0.2.0 | Superseded | [intelligence-manifest-v0.2.md](intelligence-manifest-v0.2.md) |
+| Intelligence Manifest Specification | 0.1.0 | Superseded | [intelligence-manifest-v0.1.md](intelligence-manifest-v0.1.md) |
 
 ## JSON Schema
 
