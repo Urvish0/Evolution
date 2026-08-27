@@ -1,0 +1,108 @@
+<svg fill="none" viewBox="0 0 900 480" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg { fill: #0d1117; }
+    .border { stroke: #30363d; stroke-width: 1.5; rx: 12; }
+    .bar { fill: #161b22; }
+    .title { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 500; }
+    .code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 13px; }
+    .c-gray { fill: #6e7681; }
+    .c-purple { fill: #bc8cff; font-weight: 600; }
+    .c-blue { fill: #79c0ff; }
+    .c-green { fill: #7ee787; }
+    .c-yellow { fill: #e3b341; }
+    .c-red { fill: #ff7b72; }
+    .c-cyan { fill: #56d4dd; }
+    .c-white { fill: #f0f6fc; }
+    .box { fill: #161b22; stroke: #30363d; stroke-width: 1; rx: 6; }
+    .step-pill { fill: #1f242c; stroke: #388bfd; stroke-width: 1; rx: 4; }
+    .step-text { fill: #58a6ff; font-family: ui-monospace, monospace; font-size: 11px; font-weight: 600; }
+  </style>
+
+  <!-- Terminal Window Frame -->
+  <rect width="900" height="480" rx="12" class="bg border"/>
+  <rect width="900" height="38" rx="12" class="bar"/>
+  <rect y="26" width="900" height="12" class="bar"/>
+  <line x1="0" y1="38" x2="900" y2="38" stroke="#30363d" stroke-width="1.5"/>
+
+  <!-- Window Controls -->
+  <circle cx="20" cy="19" r="6" fill="#ff5f56"/>
+  <circle cx="40" cy="19" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="19" r="6" fill="#27c93f"/>
+  <text x="450" y="24" text-anchor="middle" class="title">Evolution Workflow — Version Intelligence, Not Code</text>
+
+  <!-- Content Grid: 2x2 Panels -->
+
+  <!-- Panel 1: @evo.track -->
+  <g transform="translate(24, 54)">
+    <rect width="416" height="190" class="box"/>
+    <rect x="12" y="10" width="76" height="18" class="step-pill"/>
+    <text x="50" y="23" text-anchor="middle" class="step-text">1. CAPTURE</text>
+    <text x="96" y="23" class="code c-gray"># Auto-capture agent state</text>
+    
+    <g transform="translate(14, 46)" class="code">
+      <text y="0"><tspan class="c-purple">@evo</tspan><tspan class="c-white">.track(model=</tspan><tspan class="c-green">"gpt-4o"</tspan><tspan class="c-white">, temp=</tspan><tspan class="c-blue">0.2</tspan><tspan class="c-white">)</tspan></text>
+      <text y="20"><tspan class="c-purple">def</tspan> <tspan class="c-blue">legal_analyst</tspan><tspan class="c-white">(facts: str):</tspan></text>
+      <text y="40"><tspan class="c-green">    """Analyze contract dispute under UCC."""</tspan></text>
+      <text y="60"><tspan class="c-purple">    return</tspan> <tspan class="c-white">client.chat.completions.create(...)</tspan></text>
+      <text y="90"><tspan class="c-gray"># Result automatically captured:</tspan></text>
+      <text y="110"><tspan class="c-cyan">✓</tspan> <tspan class="c-gray">Prompt, Model, Latency (32ms), Tokens (1.6k)</tspan></text>
+    </g>
+  </g>
+
+  <!-- Panel 2: evo commit -->
+  <g transform="translate(460, 54)">
+    <rect width="416" height="190" class="box"/>
+    <rect x="12" y="10" width="70" height="18" class="step-pill"/>
+    <text x="47" y="23" text-anchor="middle" class="step-text">2. COMMIT</text>
+    <text x="90" y="23" class="code c-gray"># Immutable Merkle snapshot</text>
+
+    <g transform="translate(14, 46)" class="code">
+      <text y="0"><tspan class="c-purple">repo</tspan><tspan class="c-white">.commit(</tspan></text>
+      <text y="20"><tspan class="c-white">    message=</tspan><tspan class="c-green">"deploy strict litigation analyst"</tspan><tspan class="c-white">,</tspan></text>
+      <text y="40"><tspan class="c-white">    tags=[</tspan><tspan class="c-green">"v1.0-legal"</tspan><tspan class="c-white">],</tspan></text>
+      <text y="60"><tspan class="c-white">)</tspan></text>
+      <text y="90"><tspan class="c-gray">$ evo log --oneline</tspan></text>
+      <text y="110"><tspan class="c-yellow">67a6f741</tspan> <tspan class="c-cyan">[v1.0-legal]</tspan> <tspan class="c-white">deploy strict legal analyst</tspan></text>
+      <text y="130"><tspan class="c-yellow">12d1a423</tspan> <tspan class="c-cyan">[v2.0-mediator]</tspan> <tspan class="c-white">deploy commercial mediator</tspan></text>
+    </g>
+  </g>
+
+  <!-- Panel 3: evo diff -->
+  <g transform="translate(24, 260)">
+    <rect width="416" height="200" class="box"/>
+    <rect x="12" y="10" width="56" height="18" class="step-pill"/>
+    <text x="40" y="23" text-anchor="middle" class="step-text">3. DIFF</text>
+    <text x="76" y="23" class="code c-gray">$ evo diff main exp-mediator</text>
+
+    <g transform="translate(14, 46)" class="code">
+      <text y="0"><tspan class="c-gray">--- a/evolution.manifest.json (main)</tspan></text>
+      <text y="18"><tspan class="c-gray">+++ b/evolution.manifest.json (exp-mediator)</tspan></text>
+      <text y="40"><tspan class="c-red">-  "model": "qwen3.8-27b",</tspan></text>
+      <text y="58"><tspan class="c-green">+  "model": "qwen3.6-27b",</tspan></text>
+      <text y="76"><tspan class="c-red">-  "temperature": 0.1,</tspan></text>
+      <text y="94"><tspan class="c-green">+  "temperature": 0.7,</tspan></text>
+      <text y="112"><tspan class="c-red">-  "prompt": "Senior Litigation Attorney..."</tspan></text>
+      <text y="130"><tspan class="c-green">+  "prompt": "Master Commercial Mediator..."</tspan></text>
+    </g>
+  </g>
+
+  <!-- Panel 4: evo evaluate -->
+  <g transform="translate(460, 260)">
+    <rect width="416" height="200" class="box"/>
+    <rect x="12" y="10" width="80" height="18" class="step-pill"/>
+    <text x="52" y="23" text-anchor="middle" class="step-text">4. EVALUATE</text>
+    <text x="100" y="23" class="code c-gray"># LLM-as-a-Judge semantic scorecard</text>
+
+    <g transform="translate(14, 44)" class="code">
+      <text y="0"><tspan class="c-gray">Dimension       | Agent 1 (Legal) | Agent 2 (Mediate)</tspan></text>
+      <text y="16"><tspan class="c-gray">----------------------------------------------------</tspan></text>
+      <text y="34"><tspan class="c-white">Accuracy        | </tspan><tspan class="c-green">9.0/10 (90%)</tspan><tspan class="c-white">    | </tspan><tspan class="c-red">1.0/10 (10%)</tspan></text>
+      <text y="52"><tspan class="c-white">Helpfulness     | </tspan><tspan class="c-green">8.0/10 (80%)</tspan><tspan class="c-white">    | </tspan><tspan class="c-red">1.0/10 (10%)</tspan></text>
+      <text y="70"><tspan class="c-white">Instruction     | </tspan><tspan class="c-green">10.0/10 (100%)</tspan><tspan class="c-white">  | </tspan><tspan class="c-red">1.0/10 (10%)</tspan></text>
+      <text y="88"><tspan class="c-white">Safety          | </tspan><tspan class="c-green">10.0/10 (100%)</tspan><tspan class="c-white">  | </tspan><tspan class="c-green">10.0/10 (100%)</tspan></text>
+      <text y="104"><tspan class="c-gray">----------------------------------------------------</tspan></text>
+      <text y="122"><tspan class="c-yellow">OVERALL SCORE   | </tspan><tspan class="c-green">92.5% (PASS)</tspan><tspan class="c-yellow">   | </tspan><tspan class="c-red">32.5% (FAIL)</tspan></text>
+      <text y="142"><tspan class="c-cyan">✓ Regression gate prevented bad deployment to main</tspan></text>
+    </g>
+  </g>
+</svg>

@@ -32,6 +32,8 @@ Git can't solve this because Git doesn't know what a prompt is. Evolution does.
 
 ## How It Works
 
+![Evolution Workflow](docs/assets/workflow.svg)
+
 ```python
 # pip install evolution-sdk
 import evolution as evo
@@ -47,11 +49,11 @@ def my_agent(question: str):
     )
 
 # Run your agent — Evolution automatically captures:
-# ✅ System prompt (from docstring)
-# ✅ Model config (gpt-4o, temp=0.3)
-# ✅ Input/output text
-# ✅ Token usage & latency
-# ✅ Execution telemetry record
+# - System prompt (from docstring)
+# - Model config (gpt-4o, temp=0.3)
+# - Input/output text
+# - Token usage & latency
+# - Execution telemetry record
 result = my_agent("What is quantum computing?")
 
 # Commit the intelligence snapshot
@@ -177,18 +179,17 @@ Evolution/
 ---
 
 ## Current Status
-
-> **Phase 8 complete — Core Engine + Python SDK + Specs v1.0**
-
-- ✅ Go core engine with content-addressable storage, Merkle trees, 3-way merge, replay, and evaluation
-- ✅ Python SDK with `@track` decorator, framework adapters, and zero dependencies
-- ✅ Intelligence Manifest Specification v1.0 (stable)
-- ✅ Framework Integration Specification v1.0 (stable)
-- ✅ 75 automated tests passing (53 Go + 22 Python)
-- ✅ Live multi-agent testing with Groq LPU models
-- 🔜 PyPI publication (`pip install evolution-sdk`)
-- 🔜 LLM-as-judge semantic evaluation
-- 🔜 REST API server for remote collaboration
+ 
+> **Phase 8.5 complete — Core Engine + Python SDK on PyPI + LLM-as-a-Judge**
+ 
+- Go core engine with content-addressable storage, Merkle trees, 3-way merge, replay, and evaluation
+- Python SDK (`evolution-sdk`) published live on PyPI with zero runtime dependencies
+- LLM-as-a-Judge semantic evaluation engine with multi-dimensional scoring
+- Intelligence Manifest Specification v1.0 (stable)
+- Framework Integration Specification v1.0 (stable)
+- 80 automated tests passing (53 Go + 27 Python)
+- Live multi-agent benchmark testbed with Groq LPU models
+- Next: Automated PyPI CI/CD pipeline (Phase 9) and Go REST API server (Phase 10)
 
 ---
 
