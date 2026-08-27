@@ -45,7 +45,7 @@ def create_creative_negotiator(repo: evo.Repository):
                 ],
                 model="qwen/qwen3.6-27b",
                 temperature=0.7,
-                max_tokens=512,
+                max_tokens=1500,
             )
             return chat_completion
 

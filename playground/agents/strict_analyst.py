@@ -45,7 +45,7 @@ def create_strict_analyst(repo: evo.Repository):
                 ],
                 model="qwen/qwen3.8-27b",
                 temperature=0.1,
-                max_tokens=512,
+                max_tokens=1500,
             )
             return chat_completion
 

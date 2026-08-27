@@ -13,6 +13,11 @@ from evolution.adapters import (
     from_openai,
 )
 from evolution.capture import RecordContextManager, record, track
+from evolution.evaluators import (
+    DimensionScore,
+    EvaluationReport,
+    SemanticEvaluator,
+)
 from evolution.exceptions import (
     ArtifactNotFoundError,
     CommandExecutionError,
@@ -59,6 +64,8 @@ __all__ = [
     "BaseArtifact",
     "CommandExecutionError",
     "CommitInfo",
+    "DimensionScore",
+    "EvaluationReport",
     "EvaluationResult",
     "EvaluationScore",
     "EvolutionError",
@@ -77,6 +84,7 @@ __all__ = [
     "RepositoryAlreadyExistsError",
     "RepositoryNotFoundError",
     "RetrievalArtifact",
+    "SemanticEvaluator",
     "TokenUsage",
     "ToolArtifact",
     "__version__",
