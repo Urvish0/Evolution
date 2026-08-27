@@ -203,7 +203,7 @@ pytest sdk/python/tests/ -v
 
 ## License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](https://github.com/Urvish0/Evolution/blob/main/sdk/python/LICENSE) file for details.
 
 ---
 
