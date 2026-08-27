@@ -3,6 +3,7 @@
 examples/**/agent_workspace/
 playground/.venv/
 playground/workspace/
+playground/sandbox_workspace/
 .env
 *.env
 
