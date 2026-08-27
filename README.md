@@ -2,7 +2,11 @@
 
 > **Version Intelligence, Not Code.**
 
+[![PyPI Version](https://img.shields.io/pypi/v/evolution-sdk.svg?color=blue)](https://pypi.org/project/evolution-sdk/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/evolution-sdk.svg?color=blue)](https://pypi.org/project/evolution-sdk/)
 [![CI](https://github.com/Urvish0/Evolution/actions/workflows/ci.yml/badge.svg)](https://github.com/Urvish0/Evolution/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20runtime-brightgreen.svg)](https://pypi.org/project/evolution-sdk/)
 
 Evolution is an **AI-native version control platform**. Where Git versions source code, Evolution versions the complete operational state of an AI system — prompts, model configurations, memory, retrieval settings, tool definitions, and output policies — as a single immutable **Intelligence Commit**.
 
