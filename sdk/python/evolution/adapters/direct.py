@@ -18,6 +18,10 @@ from evolution.models.manifest import Manifest
 class OpenAIAdapter(BaseAdapter):
     """Converts OpenAI request dictionaries or client configurations into an Intelligence Manifest."""
 
+    @classmethod
+    def from_openai(cls, obj: Any, name: str = "openai-system", description: str = "") -> Manifest:
+        return cls().to_manifest(obj, name=name, description=description)
+
     def to_manifest(self, obj: Any, name: str = "openai-system", description: str = "") -> Manifest:
         manifest = Manifest(name=name, description=description or "OpenAI API intelligence state")
         params = obj if isinstance(obj, dict) else getattr(obj, "__dict__", {})
@@ -68,6 +72,10 @@ class OpenAIAdapter(BaseAdapter):
 
 class AnthropicAdapter(BaseAdapter):
     """Converts Anthropic request dictionaries or client configurations into an Intelligence Manifest."""
+
+    @classmethod
+    def from_anthropic(cls, obj: Any, name: str = "anthropic-system", description: str = "") -> Manifest:
+        return cls().to_manifest(obj, name=name, description=description)
 
     def to_manifest(self, obj: Any, name: str = "anthropic-system", description: str = "") -> Manifest:
         manifest = Manifest(name=name, description=description or "Anthropic API intelligence state")

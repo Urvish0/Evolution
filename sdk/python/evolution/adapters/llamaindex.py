@@ -15,9 +15,13 @@ from evolution.models.manifest import Manifest
 
 
 class LlamaIndexAdapter(BaseAdapter):
-    """Converts LlamaIndex indices, query engines, and retrievers into an Intelligence Manifest."""
+    """Converts LlamaIndex indices, retrievers, query engines into an Intelligence Manifest."""
 
-    def to_manifest(self, obj: Any, name: str = "llamaindex-rag", description: str = "") -> Manifest:
+    @classmethod
+    def from_llamaindex(cls, obj: Any, name: str = "llamaindex-agent", description: str = "") -> Manifest:
+        return cls().to_manifest(obj, name=name, description=description)
+
+    def to_manifest(self, obj: Any, name: str = "llamaindex-agent", description: str = "") -> Manifest:
         manifest = Manifest(name=name, description=description or "LlamaIndex RAG application state")
 
         # 1. Extract Retrieval settings

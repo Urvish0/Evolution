@@ -16,9 +16,13 @@ from evolution.models.manifest import Manifest
 
 
 class CrewAIAdapter(BaseAdapter):
-    """Converts CrewAI Crews, Agents, and Tasks into a multi-agent Intelligence Manifest."""
+    """Converts CrewAI Crews, Agents, and Tasks into an Intelligence Manifest."""
 
-    def to_manifest(self, obj: Any, name: str = "crewai-multi-agent", description: str = "") -> Manifest:
+    @classmethod
+    def from_crewai(cls, obj: Any, name: str = "crewai-agent", description: str = "") -> Manifest:
+        return cls().to_manifest(obj, name=name, description=description)
+
+    def to_manifest(self, obj: Any, name: str = "crewai-agent", description: str = "") -> Manifest:
         manifest = Manifest(name=name, description=description or "CrewAI multi-agent system state")
 
         agents = getattr(obj, "agents", []) or []

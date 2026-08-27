@@ -19,6 +19,10 @@ from evolution.models.manifest import Manifest
 class LangChainAdapter(BaseAdapter):
     """Converts LangChain chains, agents, prompt templates, and tools into an Intelligence Manifest."""
 
+    @classmethod
+    def from_langchain(cls, obj: Any, name: str = "langchain-agent", description: str = "") -> Manifest:
+        return cls().to_manifest(obj, name=name, description=description)
+
     def to_manifest(self, obj: Any, name: str = "langchain-agent", description: str = "") -> Manifest:
         manifest = Manifest(name=name, description=description or "LangChain application state")
 

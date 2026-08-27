@@ -187,7 +187,7 @@ class Repository:
                     args += ["--meta", f"{k}={v}"]
 
             out = self._run_cli(args)
-            # Parse commit ID from output e.g. "[main 895c933] commit message" or "commit: 895c933..."
+            # Parse commit ID from output or read current branch head
             commit_id = "unknown"
             for line in out.splitlines():
                 if "[" in line and "]" in line:
@@ -196,6 +196,18 @@ class Repository:
                         commit_id = parts[1]
                 elif line.startswith("commit "):
                     commit_id = line.split()[1]
+
+            if commit_id == "unknown":
+                head_file = self.root / ".evolution" / "HEAD"
+                if head_file.is_file():
+                    branch_name = head_file.read_text(encoding="utf-8").strip()
+                    branch_file = self.root / ".evolution" / "branches" / f"{branch_name}.json"
+                    if branch_file.is_file():
+                        try:
+                            bdata = json.loads(branch_file.read_text(encoding="utf-8"))
+                            commit_id = bdata.get("head", "unknown")
+                        except Exception:
+                            pass
 
             return CommitInfo(id=commit_id, message=message, author=author or "", tags=tags or [], metadata=metadata or {})
 
