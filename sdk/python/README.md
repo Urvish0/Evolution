@@ -13,18 +13,18 @@ While traditional version control systems (like Git) track line-by-line changes 
 
 ---
 
-## ⚡ Key Features
+## Key Features
 
-- 🪶 **Zero Runtime Dependencies**: Pure Python implementation with zero third-party dependencies. Ultra-fast, lightweight, and won't conflict with your environment.
-- 🎯 **Automatic Intelligence Capture**: Use the `@evolution.track` decorator to automatically extract docstring prompts, model hyperparameters, token consumption, and latency.
-- ⏱️ **Precision Execution Telemetry**: Record execution traces, inputs, outputs, and hardware latency using `@track` or the `evolution.record` context manager.
-- 🔌 **Universal Framework Adapters**: Seamlessly introspect and export standard Intelligence Manifests from **LangChain**, **LlamaIndex**, **CrewAI**, and direct OpenAI / Anthropic client calls.
-- 🔒 **Git-Compatible CAS Blobs**: Content-Addressable Storage with auto-computed SHA-256 Merkle hashes.
-- 📋 **Intelligence Manifest Spec v1.0 Compliant**: Native support for creating, validating, and saving standard `evolution.manifest.json` schemas.
+- **Zero Runtime Dependencies**: Pure Python implementation with zero third-party dependencies. Ultra-fast, lightweight, and won't conflict with your environment.
+- **Automatic Intelligence Capture**: Use the `@evolution.track` decorator to automatically extract docstring prompts, model hyperparameters, token consumption, and latency.
+- **Precision Execution Telemetry**: Record execution traces, inputs, outputs, and hardware latency using `@track` or the `evolution.record` context manager.
+- **Universal Framework Adapters**: Seamlessly introspect and export standard Intelligence Manifests from **LangChain**, **LlamaIndex**, **CrewAI**, and direct OpenAI / Anthropic client calls.
+- **Git-Compatible CAS Blobs**: Content-Addressable Storage with auto-computed SHA-256 Merkle hashes.
+- **Intelligence Manifest Spec v1.0 Compliant**: Native support for creating, validating, and saving standard `evolution.manifest.json` schemas.
 
 ---
 
-## 📦 Installation
+## Installation
 
 Install `evolution-sdk` via `pip` or `uv`:
 
@@ -40,7 +40,7 @@ uv add evolution-sdk
 
 ---
 
-## 🚀 Quickstart in 30 Seconds
+## Quickstart in 30 Seconds
 
 ### 1. Initialize or Open an Evolution Repository
 
@@ -191,7 +191,7 @@ Evolution stores your complete AI system state in a portable, framework-agnostic
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 To run the SDK test suite:
 
@@ -201,13 +201,13 @@ pytest sdk/python/tests/ -v
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🌐 Links
+## Links
 
 - **GitHub Repository:** [https://github.com/Urvish0/Evolution](https://github.com/Urvish0/Evolution)
 - **Specification:** [Intelligence Manifest Spec v1.0](https://github.com/Urvish0/Evolution/blob/main/spec/intelligence-manifest-v1.0.md)

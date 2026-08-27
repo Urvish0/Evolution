@@ -54,7 +54,7 @@ def groq_judge_fn(system_prompt: str, user_prompt: str) -> str:
 
 def main():
     print("=" * 80)
-    print("⚖️  EVOLUTION SEMANTIC EVALUATION: LLM-AS-A-JUDGE (GROQ LPU)")
+    print("EVOLUTION SEMANTIC EVALUATION: LLM-AS-A-JUDGE (GROQ LPU)")
     print("=" * 80)
 
     repo_dir = Path(__file__).parent / "workspace"
@@ -79,20 +79,20 @@ def main():
         "in operational losses. Client refuses to pay final $150,000 milestone invoice and threatens lawsuit."
     )
 
-    print("\n🚀 Executing Agent 1 (Strict Litigation Analyst)...")
+    print("\n[RUNNING] Executing Agent 1 (Strict Litigation Analyst)...")
     res1 = strict_analyst(dispute_facts)
     exec1 = getattr(strict_analyst, "last_execution", None)
 
-    print("🚀 Executing Agent 2 (Creative Strategic Negotiator)...")
+    print("[RUNNING] Executing Agent 2 (Creative Strategic Negotiator)...")
     res2 = creative_negotiator(dispute_facts)
     exec2 = getattr(creative_negotiator, "last_execution", None)
 
     if not exec1 or not exec2:
-        print("❌ Could not capture executions.")
+        print("[ERROR] Could not capture executions.")
         return
 
     print("\n" + "=" * 80)
-    print("🧑‍⚖️  RUNNING IMPARTIAL LLM JUDGE EVALUATION...")
+    print("RUNNING IMPARTIAL LLM JUDGE EVALUATION...")
     print("=" * 80)
 
     print("\nEvaluating Agent 1...")
@@ -137,7 +137,7 @@ def main():
 
     # Print Scorecard
     print("\n" + "=" * 80)
-    print("📊 SIDE-BY-SIDE SEMANTIC JUDGMENT SCORECARD")
+    print("SIDE-BY-SIDE SEMANTIC JUDGMENT SCORECARD")
     print("=" * 80)
     print(f"Judge Model: {report1.judge_model}\n")
 
@@ -159,13 +159,13 @@ def main():
     print(f"{'OVERALL SCORE':<25} | {report1.overall_score*100:.1f}%{'':<19} | {report2.overall_score*100:.1f}%")
     print("=" * 80)
 
-    print("\n📝 Judge Summary for Agent 1 (Strict Analyst):")
+    print("\nJudge Summary for Agent 1 (Strict Analyst):")
     print(f"   \"{report1.judge_reasoning}\"")
 
-    print("\n📝 Judge Summary for Agent 2 (Creative Negotiator):")
+    print("\nJudge Summary for Agent 2 (Creative Negotiator):")
     print(f"   \"{report2.judge_reasoning}\"")
 
-    print("\n🔒 Evaluations permanently persisted in .evolution/evaluations/ directory.")
+    print("\nEvaluations permanently persisted in .evolution/evaluations/ directory.")
     print("=" * 80)
 
 
