@@ -119,7 +119,27 @@ print(f"Recorded execution with duration: {ctx.execution.duration_ms} ms")
 
 ---
 
-## 🔌 Framework Adapters
+### 4. Standalone CLI (`evo-py` / `python -m evolution`)
+
+`evolution-sdk` provides an immediate command-line tool without needing Go:
+
+```bash
+# Check working tree and intelligence status
+evo-py status
+
+# Inspect commit history
+evo-py log --oneline
+
+# Inspect recorded AI telemetry
+evo-py execution list
+
+# Inspect evaluation scorecards
+evo-py evaluate
+```
+
+---
+
+## Framework Adapters
 
 Evolution provides plug-and-play adapters to export standard Intelligence Manifests directly from your existing AI framework abstractions:
 

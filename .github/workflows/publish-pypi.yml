@@ -1,0 +1,41 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    name: Build & Publish evolution-sdk to PyPI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Build and Test Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine pytest
+
+      - name: Run Unit Tests
+        run: pytest sdk/python/tests -v
+
+      - name: Build Wheel and Source Distribution
+        run: python -m build sdk/python
+
+      - name: Verify Package Distribution
+        run: twine check sdk/python/dist/*
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload sdk/python/dist/* --non-interactive

@@ -25,6 +25,10 @@ classifiers = [
 ]
 dependencies = []
 
+[project.scripts]
+evo-py = "evolution.cli:main"
+evolution = "evolution.cli:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",

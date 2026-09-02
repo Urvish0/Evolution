@@ -217,13 +217,15 @@ class Repository:
 
     def status(self) -> RepoStatus:
         """Returns the current working tree and branch status."""
+        import re
         if self._evo_bin:
             out = self._run_cli(["status"])
             status = RepoStatus()
             for line in out.splitlines():
-                if line.startswith("On branch "):
-                    status.branch = line.replace("On branch ", "").strip()
-                elif "nothing to commit, working tree clean" in line:
+                clean_line = re.sub(r"\x1b\[[0-9;]*m", "", line)
+                if clean_line.startswith("On branch "):
+                    status.branch = clean_line.replace("On branch ", "").strip()
+                elif "nothing to commit, working tree clean" in clean_line:
                     status.is_clean = True
             return status
         return RepoStatus(branch="main", is_clean=True)
