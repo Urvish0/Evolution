@@ -157,12 +157,15 @@ Evolution/
 
 | Document | Purpose |
 |----------|---------|
+| [Getting Started (5-min Tutorial)](docs/GETTING_STARTED.md) | Install, track, commit, diff, and evaluate in 5 minutes |
 | [CLI Usage Guide](USAGE.md) | Complete CLI command reference |
 | [Official Manual](DOCUMENTATION.md) | Technical manual, architecture, and tutorials |
 | [Intelligence Manifest Spec v1.0](spec/intelligence-manifest-v1.0.md) | Open standard for AI system state (stable) |
 | [Framework Integration Spec v1.0](spec/framework-integration-v1.0.md) | Adapter protocol for LangChain, LlamaIndex, CrewAI |
 | [JSON Schema](spec/schema/evolution-manifest.schema.json) | Formal JSON Schema for manifest validation |
 | [Verification Report](docs/EVOLUTION_VERIFICATION_REPORT.md) | Complete technical proof with live Groq benchmarks |
+| [Contributing](CONTRIBUTING.md) | Development setup, code standards, and contribution guide |
+| [Changelog](CHANGELOG.md) | Release history and version notes |
 
 ---
 
