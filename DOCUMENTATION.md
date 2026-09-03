@@ -1,6 +1,6 @@
 # Evolution Platform — Official Documentation & Technical Reference
 
-> **Version:** v0.7.0  
+> **Version:** v0.8.5  
 > **Core Mission:** *"Version Intelligence, Not Code."*  
 > **Specification:** Intelligence Manifest Specification v1.0  
 
@@ -16,7 +16,7 @@
    - [2.4 Working Tree Comparison & Content Diffs](#24-working-tree-comparison--content-diffs)
    - [2.5 Artifact Model](#25-artifact-model)
    - [2.6 Intelligence Manifest Specification v1.0](#26-intelligence-manifest-specification-v10)
-3. [CLI Reference Manual](#3-cli-reference-manual)
+3. [CLI Reference Manual (Go Binary: evo)](#3-cli-reference-manual-go-binary-evo)
    - [`evo init`](#evo-init)
    - [`evo status`](#evo-status)
    - [`evo config`](#evo-config)
@@ -28,12 +28,14 @@
    - [`evo checkout`](#evo-checkout)
    - [`evo manifest`](#evo-manifest)
    - [`evo version`](#evo-version)
-4. [End-to-End Example Use Cases](#4-end-to-end-example-use-cases)
-   - [Use Case 1: Initializing and Versioning an AI Legal Assistant](#use-case-1-initializing-and-versioning-an-ai-legal-assistant)
-   - [Use Case 2: Parallel Branching for Model Configuration Experiments](#use-case-2-parallel-branching-for-model-configuration-experiments)
-   - [Use Case 3: Line-by-Line Content Diffing on System Prompts](#use-case-3-line-by-line-content-diffing-on-system-prompts)
-5. [Repository On-Disk Layout](#5-repository-on-disk-layout)
-6. [Python SDK Reference (`evolution-sdk`)](#6-python-sdk-reference-evolution-sdk)
+4. [Standalone Python CLI (evo-py)](#4-standalone-python-cli-evo-py)
+5. [End-to-End Example Use Cases](#5-end-to-end-example-use-cases)
+6. [Repository On-Disk Layout](#6-repository-on-disk-layout)
+7. [Python SDK Reference (evolution-sdk)](#7-python-sdk-reference-evolution-sdk)
+   - [7.1 Automatic Capture with @evo.track](#71-automatic-capture-with-evotrack)
+   - [7.2 Tracing with RecordContextManager](#72-tracing-with-recordcontextmanager)
+   - [7.3 Framework Adapters](#73-framework-adapters)
+   - [7.4 LLM-as-a-Judge Semantic Evaluation](#74-llm-as-a-judge-semantic-evaluation)
 
 ---
 
@@ -601,5 +603,61 @@ manifest = evo.from_anthropic({"model": "claude-3.5-sonnet", "system": "..."})
 manifest.save(".")
 ```
 
+### 7.4 LLM-as-a-Judge Semantic Evaluation
 
+Evolution includes a built-in semantic evaluator that uses an LLM judge to score agent outputs across multi-dimensional rubrics with automated CI quality gates:
 
+```python
+import evolution as evo
+
+evaluator = evo.SemanticEvaluator(
+    api_key="your-api-key",
+    judge_model="qwen/qwen3.8-27b",
+    base_url="https://api.groq.com/openai/v1",  # Works with Groq, OpenAI, or Anthropic
+    weights={
+        "accuracy": 0.35,
+        "helpfulness": 0.25,
+        "instruction_following": 0.25,
+        "safety": 0.15,
+    },
+)
+
+report = evaluator.evaluate(
+    prompt="Explain the difference between a warranty and a condition.",
+    response=agent_response,
+    instruction="You are a corporate attorney. Cite UCC Section 2.",
+)
+
+print(f"Overall Score: {report.overall_score:.1%}")
+for score in report.scores:
+    print(f"  {score.dimension}: {score.score}/10 ({score.reasoning})")
+
+# Persist evaluation record directly to repository
+repo.save_evaluation(report.to_evaluation_result(commit_id="main"))
+```
+
+---
+
+## 4. Standalone Python CLI (`evo-py`)
+
+For environments where Go is not installed, the `evolution-sdk` package bundles a standalone CLI accessible as `evo-py` or `python -m evolution`:
+
+```bash
+# Initialize repository
+evo-py init ./my-project --name "support-agent"
+
+# Inspect active branch and manifest summary
+evo-py status
+
+# View commit history
+evo-py log --oneline
+
+# Inspect recorded AI telemetry
+evo-py execution list
+
+# Inspect semantic evaluation scorecards
+evo-py evaluate
+
+# Validate manifest against the specification
+evo-py manifest validate
+```

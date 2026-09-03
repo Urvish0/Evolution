@@ -6,16 +6,31 @@
 
 ## Installation & Setup
 
-### Option 1: Run directly with Go
+### Option 1: Python CLI via pip (No Go required)
 ```bash
-go run ./cmd/evo <command>
+pip install evolution-sdk
+
+# Run CLI commands:
+evo-py status
+# or
+python -m evolution status
 ```
 
-### Option 2: Install globally as `evo` binary
+### Option 2: Precompiled Native Binary (No Go or Python required)
+Download the standalone binary for your platform from [GitHub Releases](https://github.com/Urvish0/Evolution/releases):
+- Windows: `evo-windows-amd64.exe`
+- Linux: `evo-linux-amd64`
+- macOS: `evo-darwin-arm64`
+
+### Option 3: Compile from Source with Go
 ```bash
+# Run directly
+go run ./cmd/evo <command>
+
+# Or install globally into GOPATH/bin
 go install ./cmd/evo
 ```
-*Note: Ensure `%USERPROFILE%\go\bin` (Windows) or `$GOPATH/bin` (Linux/macOS) is in your system `PATH` to run `evo` directly from any terminal.*
+*Note: Ensure `%USERPROFILE%\go\bin` (Windows) or `$GOPATH/bin` (Linux/macOS) is in your system `PATH` to run `evo` directly.*
 
 ---
 

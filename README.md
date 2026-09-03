@@ -60,20 +60,20 @@ result = my_agent("What is quantum computing?")
 repo.commit("feat: initial research assistant configuration")
 ```
 
-Then from the CLI:
+Then from the CLI (using either `evo-py` or native `evo`):
 
 ```bash
-evo log --oneline          # View intelligence history
-evo diff main experiment   # See what changed (prompt, model, temperature)
-evo replay <commit-id>     # Reconstruct a historical AI state
-evo evaluate --compare main experiment   # Compare quality, cost, safety
+evo-py log --oneline          # View intelligence history
+evo-py status                 # Inspect active manifest and execution telemetry
+evo-py execution list         # List recorded latency and token metrics
+evo-py evaluate               # View semantic evaluation scorecards
 ```
 
 ---
 
 ## Key Features
 
-### Go Core Engine
+### Go Core Engine (`evo`)
 
 | Command | What It Does |
 |---------|--------------|
@@ -88,19 +88,21 @@ evo evaluate --compare main experiment   # Compare quality, cost, safety
 | `evo replay` | Reconstruct historical AI states from any commit |
 | `evo evaluate` | Pluggable quality evaluations with regression detection & CI gates |
 
-### Python SDK (`evolution-sdk`)
+### Python SDK & CLI (`evolution-sdk`)
 
 | Feature | Description |
 |---------|-------------|
+| `evo-py` | Standalone CLI bundled with `pip install evolution-sdk` (no Go compiler required) |
 | `@evo.track` | Decorator that auto-captures prompts, model config, and execution telemetry |
 | `evo.record()` | Context manager for precision latency measurement |
+| `SemanticEvaluator` | LLM-as-a-Judge multi-dimensional quality scoring with CI regression gates |
 | Framework Adapters | LangChain, LlamaIndex, CrewAI, OpenAI, Anthropic |
-| Zero Dependencies | Pure Python, no external runtime requirements |
+| Zero Dependencies | Pure Python standard library, no external runtime requirements |
 | Typed Artifacts | 6 artifact types with Git-compatible SHA-256 auto-hashing |
 
 ### Intelligence Manifest Specification (v1.0 Stable)
 
-An **open, framework-agnostic standard** for describing the complete state of any AI system. Like OpenAPI standardized REST APIs, the Intelligence Manifest standardizes AI system configuration.
+An open, framework-agnostic standard for describing the operational state of an AI system. Like OpenAPI standardizes REST APIs, the Intelligence Manifest standardizes AI system configuration.
 
 ---
 
@@ -109,8 +111,9 @@ An **open, framework-agnostic standard** for describing the complete state of an
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  DEVELOPER INTERFACE                                             │
-│  ├── CLI: evo init, commit, diff, merge, replay, evaluate       │
-│  └── Python SDK: @evo.track, evo.record(), Repository           │
+│  ├── Go CLI (evo): init, commit, diff, merge, replay, evaluate  │
+│  ├── Python CLI (evo-py): status, log, manifest, execution, eval│
+│  └── Python SDK: @evo.track, evo.record(), SemanticEvaluator   │
 │                                                                  │
 │  FRAMEWORK ADAPTERS                                              │
 │  ├── LangChain, LlamaIndex, CrewAI                              │
@@ -143,12 +146,12 @@ Evolution/
 │   ├── repository/          # Core versioning engine (44 files, 53 tests)
 │   └── version/             # Version metadata
 ├── sdk/python/              # Python SDK (pip install evolution-sdk)
-│   ├── evolution/           # SDK source (8 modules)
-│   └── tests/               # 22 unit tests
+│   ├── evolution/           # SDK source (cli.py, evaluators.py, capture, models)
+│   └── tests/               # 31 unit tests
 ├── spec/                    # Intelligence Manifest Specification v1.0
-├── playground/              # Live multi-agent testing lab (Groq LPU)
-├── examples/                # Quickstart examples for new users
-└── docs/                    # Design documentation & verification reports
+├── playground/              # Live multi-agent benchmark lab (Groq LPU)
+├── examples/                # Quickstart and framework adapter examples
+└── docs/                    # Design docs, verification reports, and tutorials
 ```
 
 ---
@@ -174,25 +177,27 @@ Evolution/
 | Aspect | Git | Evolution |
 |--------|-----|-----------|
 | **What it versions** | Text files (source code) | AI system state (prompts + memory + models + tools + policies) |
-| **How content arrives** | Developer writes files manually | SDK **automatically** captures runtime state |
+| **How content arrives** | Developer writes files manually | SDK captures runtime state automatically |
 | **What a diff shows** | Line-by-line text changes | Semantic changes: "model switched from GPT-4 to Claude" |
-| **What replay means** | Checkout restores files to disk | Replay **re-executes** the AI with exact historical state |
+| **What replay means** | Checkout restores files to disk | Replay re-executes the AI with exact historical state |
 | **Evaluation** | Not applicable | Built-in quality comparison: accuracy, latency, cost, safety |
 
 ---
 
 ## Current Status
  
-> **Phase 8.5 complete — Core Engine + Python SDK on PyPI + LLM-as-a-Judge**
+> **v0.8.5 Live on PyPI — Core Engine + Python SDK + CLI + LLM-as-a-Judge**
  
 - Go core engine with content-addressable storage, Merkle trees, 3-way merge, replay, and evaluation
-- Python SDK (`evolution-sdk`) published live on PyPI with zero runtime dependencies
+- Python SDK (`evolution-sdk`) published on PyPI with zero runtime dependencies
+- Built-in `evo-py` standalone CLI for immediate terminal access
 - LLM-as-a-Judge semantic evaluation engine with multi-dimensional scoring
 - Intelligence Manifest Specification v1.0 (stable)
 - Framework Integration Specification v1.0 (stable)
-- 80 automated tests passing (53 Go + 27 Python)
+- 84 automated tests passing (53 Go + 31 Python)
 - Live multi-agent benchmark testbed with Groq LPU models
-- Next: Automated PyPI CI/CD pipeline (Phase 9) and Go REST API server (Phase 10)
+- Automated GitHub Actions release pipeline for PyPI and multi-platform binaries
+- Next: Go REST API server for remote repository synchronization (Phase 10)
 
 ---
 
