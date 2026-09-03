@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "evolution-sdk"
-version = "0.8.0"
+version = "0.8.5"
 description = "Python SDK for Evolution — AI-Native Version Control Platform"
 readme = "README.md"
 authors = [{ name = "Urvish.A.Prajapati", email = "prajapatiurvish712@gmail.com" }]

@@ -46,7 +46,7 @@ from evolution.models import (
 )
 from evolution.repository import CommitInfo, RepoStatus, Repository
 
-__version__ = "0.8.0"
+__version__ = "0.8.5"
 
 
 def init(path: Path | str = ".", name: str = "ai-intelligence") -> Repository:
